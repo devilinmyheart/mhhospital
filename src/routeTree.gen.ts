@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PhysiciansRouteImport } from './routes/physicians'
 import { Route as DepartmentsRouteImport } from './routes/departments'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -29,6 +30,11 @@ import { Route as AuthenticatedAdminDoctorsRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminAvailabilityRouteImport } from './routes/_authenticated/admin/availability'
 import { Route as AuthenticatedPortalConsultationAppointmentIdRouteImport } from './routes/_authenticated/portal/consultation.$appointmentId'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PhysiciansRoute = PhysiciansRouteImport.update({
   id: '/physicians',
   path: '/physicians',
@@ -142,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/departments': typeof DepartmentsRoute
   '/physicians': typeof PhysiciansRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/availability': typeof AuthenticatedAdminAvailabilityRoute
   '/admin/doctors': typeof AuthenticatedAdminDoctorsRoute
   '/doctor/appointments': typeof AuthenticatedDoctorAppointmentsRoute
@@ -162,6 +169,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/departments': typeof DepartmentsRoute
   '/physicians': typeof PhysiciansRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/availability': typeof AuthenticatedAdminAvailabilityRoute
   '/admin/doctors': typeof AuthenticatedAdminDoctorsRoute
   '/doctor/appointments': typeof AuthenticatedDoctorAppointmentsRoute
@@ -184,6 +192,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/departments': typeof DepartmentsRoute
   '/physicians': typeof PhysiciansRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin/availability': typeof AuthenticatedAdminAvailabilityRoute
   '/_authenticated/admin/doctors': typeof AuthenticatedAdminDoctorsRoute
   '/_authenticated/doctor/appointments': typeof AuthenticatedDoctorAppointmentsRoute
@@ -206,6 +215,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/departments'
     | '/physicians'
+    | '/sitemap.xml'
     | '/admin/availability'
     | '/admin/doctors'
     | '/doctor/appointments'
@@ -226,6 +236,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/departments'
     | '/physicians'
+    | '/sitemap.xml'
     | '/admin/availability'
     | '/admin/doctors'
     | '/doctor/appointments'
@@ -247,6 +258,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/departments'
     | '/physicians'
+    | '/sitemap.xml'
     | '/_authenticated/admin/availability'
     | '/_authenticated/admin/doctors'
     | '/_authenticated/doctor/appointments'
@@ -269,10 +281,18 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   DepartmentsRoute: typeof DepartmentsRoute
   PhysiciansRoute: typeof PhysiciansRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/physicians': {
       id: '/physicians'
       path: '/physicians'
@@ -450,6 +470,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   DepartmentsRoute: DepartmentsRoute,
   PhysiciansRoute: PhysiciansRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -184,7 +184,7 @@ export const bookAppointment = createServerFn({ method: "POST" })
         duration_min: rule.slot_duration_min,
         mode: data.mode,
         reason: data.reason ?? null,
-        status: "booked",
+        status: "pending",
       })
       .select("id")
       .single();

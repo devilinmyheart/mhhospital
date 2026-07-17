@@ -99,11 +99,150 @@ export const adminAllAppointments = createServerFn({ method: "GET" })
     await assertAdmin(context);
     const { data } = await context.supabase
       .from("appointments")
-      .select("id, scheduled_at, mode, status, reason, doctors(full_name), departments(name)")
+      .select("id, scheduled_at, mode, status, reason, notes, patient_id, doctors(full_name), departments(name)")
       .order("scheduled_at", { ascending: false })
       .limit(200);
     return data ?? [];
   });
+
+export const adminUpdateAppointment = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({
+      id: z.string().uuid(),
+      status: z.enum(["booked", "completed", "cancelled"]).optional(),
+      notes: z.string().max(2000).optional(),
+    }).parse(d),
+  )
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context);
+    const patch: { status?: string; notes?: string } = {};
+    if (data.status) patch.status = data.status;
+    if (data.notes !== undefined) patch.notes = data.notes;
+    const { error } = await context.supabase.from("appointments").update(patch as any).eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+/* ============ DEPARTMENTS ============ */
+const departmentSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  slug: z.string().trim().min(1).max(80).regex(/^[a-z0-9-]+$/, "lowercase, digits, hyphens only"),
+  code: z.string().trim().min(1).max(20),
+  description: z.string().trim().min(1).max(1000),
+});
+
+export const adminListDepartments = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const { data } = await context.supabase.from("departments").select("*").order("name");
+    return data ?? [];
+  });
+
+export const adminUpsertDepartment = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid().optional() }).and(departmentSchema).parse(d))
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context);
+    const { id, ...rest } = data as any;
+    if (id) {
+      const { error } = await context.supabase.from("departments").update(rest).eq("id", id);
+      if (error) throw new Error(error.message);
+    } else {
+      const { error } = await context.supabase.from("departments").insert(rest);
+      if (error) throw new Error(error.message);
+    }
+    return { ok: true };
+  });
+
+export const adminDeleteDepartment = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context);
+    const { error } = await context.supabase.from("departments").delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+/* ============ DOCTORS extras ============ */
+export const adminDeleteDoctor = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context);
+    const { error } = await context.supabase.from("doctors").delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+/* ============ REVIEWS ============ */
+export const adminListReviews = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const { data } = await context.supabase
+      .from("reviews")
+      .select("id, display_name, relation, rating, quote, approved, created_at")
+      .order("created_at", { ascending: false })
+      .limit(300);
+    return data ?? [];
+  });
+
+export const adminSetReviewApproval = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), approved: z.boolean() }).parse(d))
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context);
+    const { error } = await context.supabase.from("reviews").update({ approved: data.approved }).eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const adminDeleteReview = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context);
+    const { error } = await context.supabase.from("reviews").delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+/* ============ CONTACT MESSAGES ============ */
+export const adminListMessages = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const { data } = await context.supabase
+      .from("contact_messages")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(300);
+    return data ?? [];
+  });
+
+export const adminUpdateMessageStatus = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), status: z.enum(["new", "read", "resolved"]) }).parse(d))
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context);
+    const { error } = await context.supabase.from("contact_messages").update({ status: data.status }).eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const adminDeleteMessage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context);
+    const { error } = await context.supabase.from("contact_messages").delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 
 const availabilityRowSchema = z.object({
   weekday: z.number().int().min(0).max(6),

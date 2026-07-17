@@ -157,7 +157,7 @@ function Home() {
         <section className="py-20 lg:py-28">
           <div className="flex items-end justify-between mb-12 flex-wrap gap-4">
             <div>
-              <div className="text-kicker mb-3">§ 01 — Departments</div>
+              <div className="text-kicker mb-3">01 — DEPARTMENTS</div>
               <h2 className="font-mono font-bold text-4xl md:text-5xl tracking-tight leading-none">
                 Where we<br />look after you.
               </h2>

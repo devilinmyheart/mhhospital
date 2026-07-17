@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.appointments_restrict_patient_updates() FROM PUBLIC, anon, authenticated;

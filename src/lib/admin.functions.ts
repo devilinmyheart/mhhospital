@@ -116,10 +116,10 @@ export const adminUpdateAppointment = createServerFn({ method: "POST" })
   )
   .handler(async ({ context, data }) => {
     await assertAdmin(context);
-    const patch: Record<string, unknown> = {};
+    const patch: { status?: string; notes?: string } = {};
     if (data.status) patch.status = data.status;
     if (data.notes !== undefined) patch.notes = data.notes;
-    const { error } = await context.supabase.from("appointments").update(patch).eq("id", data.id);
+    const { error } = await context.supabase.from("appointments").update(patch as any).eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });

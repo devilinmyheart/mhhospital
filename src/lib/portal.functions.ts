@@ -158,7 +158,7 @@ async function validateAndReserveSlot(
     .from("appointments")
     .select("id", { count: "exact", head: true })
     .eq("doctor_id", doctorId)
-    .eq("status", "booked")
+    .in("status", ["pending", "booked"])
     .gte("scheduled_at", slotStart.toISOString())
     .lt("scheduled_at", slotEnd.toISOString());
   if (opts.excludeAppointmentId) q = q.neq("id", opts.excludeAppointmentId);

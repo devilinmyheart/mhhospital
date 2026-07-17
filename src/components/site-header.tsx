@@ -25,12 +25,23 @@ export function EmergencyRibbon() {
 
 export function SiteHeader() {
   const [user, setUser] = useState<User | null>(null);
+  const [portalTo, setPortalTo] = useState<string>("/portal");
   const router = useRouter();
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    async function refresh(u: User | null) {
+      setUser(u);
+      if (!u) { setPortalTo("/portal"); return; }
+      try {
+        const roles = await getMyRoles();
+        if (roles.includes("admin")) setPortalTo("/admin");
+        else if (roles.includes("doctor")) setPortalTo("/doctor");
+        else setPortalTo("/portal");
+      } catch { setPortalTo("/portal"); }
+    }
+    supabase.auth.getUser().then(({ data }) => refresh(data.user));
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      setUser(session?.user ?? null);
+      refresh(session?.user ?? null);
     });
     return () => sub.subscription.unsubscribe();
   }, []);

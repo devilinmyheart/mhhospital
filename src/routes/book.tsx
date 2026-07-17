@@ -126,9 +126,13 @@ function Book() {
       const scheduledAt = new Date(`${dateStr}T${time}:00`).toISOString();
       return bookFn({ data: { doctorId, departmentId, scheduledAt, mode, reason: reason || undefined } });
     },
-    onSuccess: () => {
+    onSuccess: (res: any) => {
       toast.success("Appointment booked");
-      navigate({ to: "/portal/appointments" });
+      if (mode === "video" && res?.id) {
+        navigate({ to: "/portal/consultation/$appointmentId", params: { appointmentId: res.id } });
+      } else {
+        navigate({ to: "/portal/appointments" });
+      }
     },
     onError: (e: Error) => toast.error(e.message),
   });

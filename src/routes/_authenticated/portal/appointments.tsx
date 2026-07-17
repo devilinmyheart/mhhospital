@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { getMyAppointments } from "@/lib/portal.functions";
 import { PortalShell } from "@/components/portal-shell";
@@ -44,6 +44,17 @@ function Appts() {
               </span>
             </div>
             <div className="col-span-1 text-right text-[11px] text-muted-foreground">{a.duration_min}min</div>
+            {a.mode === "video" && a.status === "booked" && (
+              <div className="col-span-12 pt-2 flex justify-end">
+                <Link
+                  to="/portal/consultation/$appointmentId"
+                  params={{ appointmentId: a.id }}
+                  className="bg-primary text-primary-foreground px-3 py-1.5 text-[11px] font-mono uppercase hover:opacity-90"
+                >
+                  Join video visit →
+                </Link>
+              </div>
+            )}
           </div>
         ))}
       </div>

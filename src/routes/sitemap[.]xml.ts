@@ -1,5 +1,5 @@
+/// <reference types="@tanstack/start-client-core/dist/esm/serverRoute" />
 import { createFileRoute } from "@tanstack/react-router";
-import "@tanstack/start-client-core";
 
 const BASE_URL = "https://mhhospital.lovable.app";
 

@@ -58,7 +58,7 @@ export const getMyAppointments = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase
       .from("appointments")
-      .select("id, scheduled_at, duration_min, mode, status, reason, notes, doctors(full_name, title), departments(name)")
+      .select("id, scheduled_at, duration_min, mode, status, reason, notes, doctor_id, doctors(full_name, title), departments(name)")
       .eq("patient_id", context.userId)
       .order("scheduled_at", { ascending: false });
     if (error) throw new Error(error.message);

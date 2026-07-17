@@ -158,7 +158,38 @@ function Home() {
           <div className="flex items-end justify-between mb-12 flex-wrap gap-4">
             <div>
               <div className="text-kicker mb-3">DEPARTMENTS</div>
-...
+              <h2 className="font-mono font-bold text-4xl md:text-5xl tracking-tight leading-none">
+                Where we<br />look after you.
+              </h2>
+            </div>
+            <Link to="/departments" className="font-mono text-[11px] uppercase tracking-[0.2em] border-b border-foreground pb-1 hover:text-primary hover:border-primary">
+              All departments →
+            </Link>
+          </div>
+          <div className="editorial-rule mb-10" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-border">
+            {departments.slice(0, 6).map((dept, i) => (
+              <Link
+                key={dept.id}
+                to="/departments"
+                search={{ id: dept.id }}
+                className="bg-background p-8 lg:p-10 hover:bg-muted transition-colors group"
+              >
+                <div className="font-mono text-[10px] text-muted-foreground mb-6 uppercase tracking-widest">
+                  DEPT 0{i + 1}
+                </div>
+                <h3 className="font-mono font-bold text-xl lg:text-2xl tracking-tight mb-4 group-hover:text-primary transition-colors">
+                  {dept.name}
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+                  {dept.description}
+                </p>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+
         {/* HOW IT WORKS */}
         <section className="pb-20 lg:pb-28">
           <div className="text-kicker mb-3">METHOD</div>

@@ -131,13 +131,9 @@ function Book() {
       const weekday = new Date(`${dateStr}T00:00:00`).getDay();
       return bookFn({ data: { doctorId, departmentId, scheduledAt, mode, reason: reason || undefined, weekday, localTime: time } });
     },
-    onSuccess: (res: any) => {
-      toast.success("Appointment booked");
-      if (mode === "video" && res?.id) {
-        navigate({ to: "/portal/consultation/$appointmentId", params: { appointmentId: res.id } });
-      } else {
-        navigate({ to: "/portal/appointments" });
-      }
+    onSuccess: () => {
+      toast.success("Request submitted — awaiting confirmation from the clinic.");
+      navigate({ to: "/portal/appointments" });
     },
     onError: (e: Error) => toast.error(e.message),
   });

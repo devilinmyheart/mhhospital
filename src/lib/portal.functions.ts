@@ -29,7 +29,7 @@ export const getMyDashboard = createServerFn({ method: "GET" })
         .from("appointments")
         .select("id, scheduled_at, mode, status, doctors(full_name), departments(name)")
         .eq("patient_id", context.userId)
-        .eq("status", "booked")
+        .in("status", ["pending", "booked"])
         .gte("scheduled_at", nowIso)
         .order("scheduled_at")
         .limit(1)
@@ -158,7 +158,7 @@ async function validateAndReserveSlot(
     .from("appointments")
     .select("id", { count: "exact", head: true })
     .eq("doctor_id", doctorId)
-    .eq("status", "booked")
+    .in("status", ["pending", "booked"])
     .gte("scheduled_at", slotStart.toISOString())
     .lt("scheduled_at", slotEnd.toISOString());
   if (opts.excludeAppointmentId) q = q.neq("id", opts.excludeAppointmentId);
@@ -184,7 +184,7 @@ export const bookAppointment = createServerFn({ method: "POST" })
         duration_min: rule.slot_duration_min,
         mode: data.mode,
         reason: data.reason ?? null,
-        status: "booked",
+        status: "pending",
       })
       .select("id")
       .single();
@@ -211,7 +211,7 @@ export const rescheduleAppointment = createServerFn({ method: "POST" })
       .maybeSingle();
     if (fetchErr) throw new Error(fetchErr.message);
     if (!appt) throw new Error("Appointment not found");
-    if (appt.status !== "booked") throw new Error("Only booked appointments can be rescheduled.");
+    if (appt.status !== "booked" && appt.status !== "pending") throw new Error("Only active appointments can be rescheduled.");
     if (new Date(appt.scheduled_at).getTime() - Date.now() < 60 * 60 * 1000) {
       throw new Error("Appointments can be rescheduled up to 1 hour before start.");
     }

@@ -110,7 +110,7 @@ export const adminUpdateAppointment = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z.object({
       id: z.string().uuid(),
-      status: z.enum(["booked", "completed", "cancelled"]).optional(),
+      status: z.enum(["pending", "booked", "completed", "cancelled", "rejected"]).optional(),
       notes: z.string().max(2000).optional(),
     }).parse(d),
   )
@@ -120,6 +120,34 @@ export const adminUpdateAppointment = createServerFn({ method: "POST" })
     if (data.status) patch.status = data.status;
     if (data.notes !== undefined) patch.notes = data.notes;
     const { error } = await context.supabase.from("appointments").update(patch as any).eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const adminConfirmAppointment = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ appointmentId: z.string().uuid() }).parse(d))
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context);
+    const { error } = await context.supabase
+      .from("appointments")
+      .update({ status: "booked" })
+      .eq("id", data.appointmentId)
+      .eq("status", "pending");
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const adminRejectAppointment = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ appointmentId: z.string().uuid() }).parse(d))
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context);
+    const { error } = await context.supabase
+      .from("appointments")
+      .update({ status: "rejected" })
+      .eq("id", data.appointmentId)
+      .eq("status", "pending");
     if (error) throw new Error(error.message);
     return { ok: true };
   });

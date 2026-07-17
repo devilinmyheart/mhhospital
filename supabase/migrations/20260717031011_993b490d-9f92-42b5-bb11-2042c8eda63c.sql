@@ -222,7 +222,7 @@ SELECT * FROM (
   VALUES
     ('Dr. Sarah Jenkins', 'Chief of Cardiology, MD/PhD', (SELECT id FROM public.departments WHERE slug='cardiology'), 'Board-certified cardiologist with 18 years of experience in interventional cardiology.'),
     ('Dr. Marcus Vane', 'Senior Neurologist', (SELECT id FROM public.departments WHERE slug='neurology'), 'Specialist in stroke care, epilepsy, and neurodegenerative disorders.'),
-    ('Dr. Aris Patel', 'Oncologist', (SELECT id FROM public.departments WHERE slug='oncology'), 'Focus on targeted therapy for solid tumors and precision oncology.'),
+    ('Dr. Khurshid Alam', 'Oncologist', (SELECT id FROM public.departments WHERE slug='oncology'), 'Focus on targeted therapy for solid tumors and precision oncology.'),
     ('Dr. Elena Rodriguez', 'Orthopedic Surgeon', (SELECT id FROM public.departments WHERE slug='orthopedics'), 'Joint replacement and sports injury reconstruction.'),
     ('Dr. Nina Okafor', 'Pediatrician', (SELECT id FROM public.departments WHERE slug='pediatrics'), 'General pediatric care and adolescent medicine.'),
     ('Dr. Julian Reyes', 'General Practitioner', (SELECT id FROM public.departments WHERE slug='general-practice'), 'Primary care, preventive medicine, and telemedicine consults.')

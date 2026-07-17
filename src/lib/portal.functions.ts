@@ -71,7 +71,7 @@ export const getAppointmentById = createServerFn({ method: "GET" })
   .handler(async ({ context, data }) => {
     const { data: appt, error } = await context.supabase
       .from("appointments")
-      .select("id, scheduled_at, duration_min, mode, status, reason, notes, patient_id, doctor_id, doctors(full_name, title), departments(name)")
+      .select("id, scheduled_at, duration_min, mode, status, reason, notes, patient_id, doctor_id, session_token, doctors(full_name, title), departments(name)")
       .eq("id", data.appointmentId)
       .maybeSingle();
     if (error) throw new Error(error.message);

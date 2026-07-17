@@ -6,7 +6,11 @@ export const Route = createFileRoute("/about")({
     meta: [
       { title: "About — MH Hospital" },
       { name: "description", content: "About MH Hospital: mission, values, and clinical excellence since 1984." },
+      { property: "og:title", content: "About — MH Hospital" },
+      { property: "og:description", content: "Our mission, values, and clinical excellence since 1984." },
+      { property: "og:url", content: "https://mhhospital.lovable.app/about" },
     ],
+    links: [{ rel: "canonical", href: "https://mhhospital.lovable.app/about" }],
   }),
   component: About,
 });

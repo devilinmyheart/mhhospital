@@ -73,8 +73,11 @@ function Auth() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {mode === "signup" && (
               <div>
-                <label className="mono-label block mb-2">FULL NAME</label>
+                <label htmlFor="auth-full-name" className="mono-label block mb-2">FULL NAME</label>
                 <input
+                  id="auth-full-name"
+                  name="full_name"
+                  autoComplete="name"
                   required
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
@@ -83,9 +86,12 @@ function Auth() {
               </div>
             )}
             <div>
-              <label className="mono-label block mb-2">EMAIL</label>
+              <label htmlFor="auth-email" className="mono-label block mb-2">EMAIL</label>
               <input
+                id="auth-email"
+                name="email"
                 type="email"
+                autoComplete="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -93,9 +99,12 @@ function Auth() {
               />
             </div>
             <div>
-              <label className="mono-label block mb-2">PASSWORD</label>
+              <label htmlFor="auth-password" className="mono-label block mb-2">PASSWORD</label>
               <input
+                id="auth-password"
+                name="password"
                 type="password"
+                autoComplete={mode === "signin" ? "current-password" : "new-password"}
                 required
                 minLength={6}
                 value={password}

@@ -1,27 +1,39 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
-import { listDepartments, listDoctors } from "@/lib/public.functions";
+import { listDepartments, listDoctors, listApprovedReviews } from "@/lib/public.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
+import { ReviewForm } from "@/components/review-form";
 import heroClinic from "@/assets/hero-clinic.jpg";
 
 
 const deptQO = queryOptions({ queryKey: ["departments"], queryFn: () => listDepartments() });
 const docsQO = queryOptions({ queryKey: ["doctors"], queryFn: () => listDoctors({ data: {} }) });
+const reviewsQO = queryOptions({ queryKey: ["reviews", "approved"], queryFn: () => listApprovedReviews() });
 
 export const Route = createFileRoute("/")({
   loader: ({ context }) => {
     context.queryClient.ensureQueryData(deptQO);
     context.queryClient.ensureQueryData(docsQO);
+    context.queryClient.ensureQueryData(reviewsQO);
   },
   component: Home,
 });
 
+const FALLBACK_REVIEWS = [
+  { id: "f1", display_name: "Meera R.", relation: "Cardiology patient", rating: 5, quote: "The care at MH is precise and unhurried. The portal made following up after surgery feel easy — and human." },
+  { id: "f2", display_name: "Arjun S.", relation: "General medicine", rating: 5, quote: "Booked a video consultation at 10pm — saw the doctor the next morning. Prescription reached my pharmacy before I did." },
+  { id: "f3", display_name: "Priya K.", relation: "Family of ER patient", rating: 5, quote: "The ER team was calm and quick when we brought my father in at 2am. We felt looked after every step of the way." },
+];
+
 function Home() {
   const { data: departments } = useSuspenseQuery(deptQO);
   const { data: doctors } = useSuspenseQuery(docsQO);
+  const { data: reviewsData } = useSuspenseQuery(reviewsQO);
+  const reviews = reviewsData.length > 0 ? reviewsData : FALLBACK_REVIEWS;
   const featuredDoctors = doctors.slice(0, 4);
   const editorPick = featuredDoctors[0];
   const supporting = featuredDoctors.slice(1, 4);
+
 
   const tickerItems = [
     "Now booking video consultations",

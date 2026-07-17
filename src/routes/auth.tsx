@@ -2,8 +2,18 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
+import { getMyRoles } from "@/lib/portal.functions";
 import { toast } from "sonner";
 import { z } from "zod";
+
+async function landingForCurrentUser(): Promise<string> {
+  try {
+    const roles = await getMyRoles();
+    if (roles.includes("admin")) return "/admin";
+    if (roles.includes("doctor")) return "/doctor";
+  } catch {}
+  return "/portal";
+}
 
 const searchSchema = z.object({ next: z.string().optional() });
 

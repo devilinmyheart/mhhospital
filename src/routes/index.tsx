@@ -71,7 +71,7 @@ function Home() {
                 <span className="transition-transform group-hover:translate-x-1">→</span>
               </Link>
               <Link to="/physicians" className="inline-flex items-center gap-3 border border-border px-6 py-4 font-mono text-[12px] tracking-[0.2em] uppercase hover:border-foreground transition-colors">
-                Meet physicians
+                MEET DOCTORS
               </Link>
             </div>
           </div>

@@ -259,33 +259,52 @@ function Home() {
         </div>
       </section>
 
-      {/* PULL QUOTE */}
-      <section className="max-w-7xl mx-auto px-4 lg:px-8 py-20 lg:py-28 grid grid-cols-12 gap-6 lg:gap-10 items-center">
-        <div className="col-span-12 lg:col-span-5">
-          <div className="relative aspect-[4/5] overflow-hidden bg-muted">
-            <img
-              src={editorialStory}
-              alt="A doctor with a patient at MH Hospital"
-              width={1400}
-              height={1000}
-              loading="lazy"
-              className="w-full h-full object-cover"
-            />
+      {/* REVIEWS */}
+      <section className="max-w-7xl mx-auto px-4 lg:px-8 py-20 lg:py-28">
+        <div className="flex items-end justify-between mb-12 flex-wrap gap-4">
+          <div>
+            <div className="text-kicker mb-3">§ 04 — Patient reviews</div>
+            <h2 className="font-mono font-bold text-4xl md:text-5xl tracking-tight leading-none">
+              What patients<br />say about us.
+            </h2>
+          </div>
+          <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+            ★★★★★ · Verified feedback
           </div>
         </div>
-        <div className="col-span-12 lg:col-span-7">
-          <div className="text-kicker mb-6">§ 04 — Patient story</div>
-          <div className="font-mono text-primary text-7xl leading-none mb-2">"</div>
-          <blockquote className="font-mono text-2xl md:text-3xl tracking-tight leading-tight text-foreground max-w-2xl">
-            The care at MH is precise and unhurried. The portal made following up
-            after surgery feel easy — and human.
-          </blockquote>
-          <div className="mt-8 flex items-center gap-4">
-            <div className="editorial-rule !max-w-10" />
-            <div className="text-kicker !text-muted-foreground">Meera R. · Cardiology patient</div>
-          </div>
+        <div className="editorial-rule mb-10" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border">
+          {[
+            {
+              q: "The care at MH is precise and unhurried. The portal made following up after surgery feel easy — and human.",
+              n: "Meera R.",
+              d: "Cardiology patient",
+            },
+            {
+              q: "Booked a video consultation at 10pm — saw the doctor the next morning. Prescription reached my pharmacy before I did.",
+              n: "Arjun S.",
+              d: "General medicine",
+            },
+            {
+              q: "The ER team was calm and quick when we brought my father in at 2am. We felt looked after every step of the way.",
+              n: "Priya K.",
+              d: "Family of ER patient",
+            },
+          ].map((r) => (
+            <figure key={r.n} className="bg-background p-8 lg:p-10 flex flex-col">
+              <div className="font-mono text-primary text-6xl leading-none mb-4">"</div>
+              <blockquote className="font-mono text-lg lg:text-xl tracking-tight leading-snug text-foreground flex-1">
+                {r.q}
+              </blockquote>
+              <figcaption className="mt-8 pt-6 border-t border-border">
+                <div className="font-mono font-bold text-sm">{r.n}</div>
+                <div className="text-kicker !text-muted-foreground mt-1">{r.d}</div>
+              </figcaption>
+            </figure>
+          ))}
         </div>
       </section>
+
 
       {/* CTA */}
       <section className="bg-foreground text-background">

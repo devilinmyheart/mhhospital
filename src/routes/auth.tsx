@@ -43,8 +43,11 @@ function Auth() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user) navigate({ to: (next as any) || "/portal", replace: true });
+    supabase.auth.getUser().then(async ({ data }) => {
+      if (data.user) {
+        const dest = (next as any) || (await landingForCurrentUser());
+        navigate({ to: dest, replace: true });
+      }
     });
   }, [navigate, next]);
 

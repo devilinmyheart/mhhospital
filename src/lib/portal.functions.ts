@@ -125,6 +125,8 @@ const bookSchema = z.object({
   scheduledAt: z.string(),
   mode: z.enum(["in_person", "video"]),
   reason: z.string().max(500).optional(),
+  weekday: z.number().int().min(0).max(6),
+  localTime: z.string().regex(/^\d{2}:\d{2}$/),
 });
 
 async function validateAndReserveSlot(

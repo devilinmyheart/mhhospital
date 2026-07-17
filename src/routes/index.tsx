@@ -225,35 +225,23 @@ function Home() {
         </div>
         <div className="editorial-rule mb-10" />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border">
-          {[
-            {
-              q: "The care at MH is precise and unhurried. The portal made following up after surgery feel easy — and human.",
-              n: "Meera R.",
-              d: "Cardiology patient",
-            },
-            {
-              q: "Booked a video consultation at 10pm — saw the doctor the next morning. Prescription reached my pharmacy before I did.",
-              n: "Arjun S.",
-              d: "General medicine",
-            },
-            {
-              q: "The ER team was calm and quick when we brought my father in at 2am. We felt looked after every step of the way.",
-              n: "Priya K.",
-              d: "Family of ER patient",
-            },
-          ].map((r) => (
-            <figure key={r.n} className="bg-background p-8 lg:p-10 flex flex-col">
-              <div className="font-mono text-primary text-6xl leading-none mb-4">"</div>
+          {reviews.map((r) => (
+            <figure key={r.id} className="bg-background p-8 lg:p-10 flex flex-col">
+              <div className="font-mono text-primary text-6xl leading-none mb-2">"</div>
+              <div className="mb-4 text-primary font-mono text-sm tracking-widest" aria-label={`${r.rating} out of 5 stars`}>
+                {"★".repeat(r.rating)}<span className="text-muted-foreground/40">{"★".repeat(5 - r.rating)}</span>
+              </div>
               <blockquote className="font-mono text-lg lg:text-xl tracking-tight leading-snug text-foreground flex-1">
-                {r.q}
+                {r.quote}
               </blockquote>
               <figcaption className="mt-8 pt-6 border-t border-border">
-                <div className="font-mono font-bold text-sm">{r.n}</div>
-                <div className="text-kicker !text-muted-foreground mt-1">{r.d}</div>
+                <div className="font-mono font-bold text-sm">{r.display_name}</div>
+                {r.relation && <div className="text-kicker !text-muted-foreground mt-1">{r.relation}</div>}
               </figcaption>
             </figure>
           ))}
         </div>
+        <ReviewForm />
       </section>
 
 

@@ -5,9 +5,9 @@ export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
       { title: "About — MH Hospital" },
-      { name: "description", content: "About MH Hospital: mission, values, and clinical excellence since 1984." },
+      { name: "description", content: "About MH Hospital: mission, values, and clinical excellence since 2013." },
       { property: "og:title", content: "About — MH Hospital" },
-      { property: "og:description", content: "Our mission, values, and clinical excellence since 1984." },
+      { property: "og:description", content: "Our mission, values, and clinical excellence since 2013." },
       { property: "og:url", content: "https://mhhospital.lovable.app/about" },
     ],
     links: [{ rel: "canonical", href: "https://mhhospital.lovable.app/about" }],
@@ -22,24 +22,24 @@ function About() {
       <main className="max-w-3xl mx-auto p-4 lg:p-6 space-y-6">
         <div className="animate-enter">
           <div className="mono-label mb-2">ABOUT / MH_HOSPITAL</div>
-          <h1 className="text-3xl font-bold tracking-tight">Precision care, since 1984.</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Precision care, since 2013.</h1>
         </div>
         <div className="prose prose-sm max-w-none text-muted-foreground space-y-4">
           <p>
             MH Hospital is a leading quaternary-care institution serving the metropolitan region with more than
-            300 physicians across 8 specialized clinical departments. We combine world-class medical expertise
+            3lakh patients treated with 98% patient satisfaction rate. We combine world-class medical expertise
             with a patient-first digital infrastructure.
           </p>
           <p>
-            Our operations center manages 14,000+ procedures annually with a 98% patient satisfaction score, and
+            Our operations center manages 14,000+ patients annually with a 98% patient satisfaction score, and
             our emergency department is open 24 hours a day, 7 days a week.
           </p>
         </div>
 
         <div className="grid grid-cols-3 gap-px bg-border border border-border">
           {[
-            { k: "1984", v: "Founded" },
-            { k: "300+", v: "Physicians" },
+            { k: "2013", v: "Founded" },
+            { k: "3lakh+", v: "PATIENTS" },
             { k: "98%", v: "Satisfaction" },
           ].map((s) => (
             <div key={s.k} className="bg-card p-6 text-center">

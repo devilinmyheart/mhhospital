@@ -3,7 +3,7 @@ import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { listDepartments, listDoctors } from "@/lib/public.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
 import heroClinic from "@/assets/hero-clinic.jpg";
-import editorialStory from "@/assets/editorial-story.jpg";
+
 
 const deptQO = queryOptions({ queryKey: ["departments"], queryFn: () => listDepartments() });
 const docsQO = queryOptions({ queryKey: ["doctors"], queryFn: () => listDoctors({ data: {} }) });

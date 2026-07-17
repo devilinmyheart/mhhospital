@@ -109,7 +109,7 @@ function Home() {
             </div>
           </div>
 
-          <div className="col-span-12 lg:col-span-5 relative animate-enter">
+          <div className="col-span-12 xl:col-span-5 relative animate-enter">
             <div className="relative aspect-[4/5] overflow-hidden bg-muted">
               <img
                 src={heroClinic}

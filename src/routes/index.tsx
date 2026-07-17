@@ -89,11 +89,14 @@ function Home() {
               <span className="editorial-rule flex-1 max-w-24" />
               <span className="text-kicker !text-muted-foreground">Care Division</span>
             </div>
-            <h1 className="font-mono font-bold tracking-[-0.03em] leading-[0.92] text-[44px] sm:text-[64px] lg:text-[84px] xl:text-[96px] break-words">
+            <h1
+              className="font-mono font-bold tracking-[-0.03em] leading-[0.92] max-w-full [word-break:break-word] hyphens-none"
+              style={{ fontSize: "clamp(2.25rem, 8.5vw, 6.5rem)" }}
+            >
               Care for your <br />
               loved one<br />
               on your&nbsp;
-              <span className="italic font-normal text-primary">schedule</span>
+              <span className="italic font-normal text-primary inline-block max-w-full text-[0.9em]">schedule</span>
             </h1>
             <p className="mt-8 text-base lg:text-lg text-muted-foreground max-w-xl leading-relaxed">
               Book in-person visits, launch video consultations, and access your medical records — from a single patient portal built for Maharajganj.

@@ -65,6 +65,25 @@ export const getMyAppointments = createServerFn({ method: "GET" })
     return data ?? [];
   });
 
+export const getAppointmentById = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { appointmentId: string }) => z.object({ appointmentId: z.string().uuid() }).parse(d))
+  .handler(async ({ context, data }) => {
+    const { data: appt, error } = await context.supabase
+      .from("appointments")
+      .select("id, scheduled_at, duration_min, mode, status, reason, notes, patient_id, doctor_id, doctors(full_name, title), departments(name)")
+      .eq("id", data.appointmentId)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!appt) throw new Error("Appointment not found");
+    // RLS lets patients or the assigned doctor read; extra defense in depth:
+    if (appt.patient_id !== context.userId && appt.doctor_id) {
+      const { data: doc } = await context.supabase.from("doctors").select("user_id").eq("id", appt.doctor_id).maybeSingle();
+      if (!doc || doc.user_id !== context.userId) throw new Error("Forbidden");
+    }
+    return appt;
+  });
+
 export const getMyPrescriptions = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {

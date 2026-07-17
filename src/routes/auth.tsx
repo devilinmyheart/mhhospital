@@ -70,7 +70,8 @@ function Auth() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       }
-      navigate({ to: (next as any) || "/portal", replace: true });
+      const dest = (next as any) || (await landingForCurrentUser());
+      navigate({ to: dest, replace: true });
     } catch (e: any) {
       toast.error(e.message ?? "Auth failed");
     } finally {

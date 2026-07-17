@@ -125,19 +125,20 @@ const bookSchema = z.object({
   scheduledAt: z.string(),
   mode: z.enum(["in_person", "video"]),
   reason: z.string().max(500).optional(),
+  weekday: z.number().int().min(0).max(6),
+  localTime: z.string().regex(/^\d{2}:\d{2}$/),
 });
 
 async function validateAndReserveSlot(
   supabase: any,
   doctorId: string,
   scheduledAt: string,
+  weekday: number,
+  hhmm: string,
   opts: { excludeAppointmentId?: string } = {},
 ) {
   const when = new Date(scheduledAt);
   if (isNaN(when.getTime())) throw new Error("Invalid time");
-  const local = new Date(when);
-  const hhmm = `${String(local.getHours()).padStart(2, "0")}:${String(local.getMinutes()).padStart(2, "0")}`;
-  const weekday = local.getDay();
 
   const { data: rules } = await supabase
     .from("doctor_availability")
@@ -172,7 +173,7 @@ export const bookAppointment = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => bookSchema.parse(d))
   .handler(async ({ context, data }) => {
-    const rule = await validateAndReserveSlot(context.supabase, data.doctorId, data.scheduledAt);
+    const rule = await validateAndReserveSlot(context.supabase, data.doctorId, data.scheduledAt, data.weekday, data.localTime);
     const { data: appt, error } = await context.supabase
       .from("appointments")
       .insert({
@@ -194,7 +195,12 @@ export const bookAppointment = createServerFn({ method: "POST" })
 export const rescheduleAppointment = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
-    z.object({ appointmentId: z.string().uuid(), scheduledAt: z.string() }).parse(d),
+    z.object({
+      appointmentId: z.string().uuid(),
+      scheduledAt: z.string(),
+      weekday: z.number().int().min(0).max(6),
+      localTime: z.string().regex(/^\d{2}:\d{2}$/),
+    }).parse(d),
   )
   .handler(async ({ context, data }) => {
     const { data: appt, error: fetchErr } = await context.supabase
@@ -210,7 +216,7 @@ export const rescheduleAppointment = createServerFn({ method: "POST" })
       throw new Error("Appointments can be rescheduled up to 1 hour before start.");
     }
 
-    const rule = await validateAndReserveSlot(context.supabase, appt.doctor_id, data.scheduledAt, {
+    const rule = await validateAndReserveSlot(context.supabase, appt.doctor_id, data.scheduledAt, data.weekday, data.localTime, {
       excludeAppointmentId: appt.id,
     });
 

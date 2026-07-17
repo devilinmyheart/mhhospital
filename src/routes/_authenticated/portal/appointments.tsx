@@ -234,7 +234,8 @@ function RescheduleDialog({ appt, onClose, onDone }: { appt: any; onClose: () =>
   const mut = useMutation({
     mutationFn: () => {
       const scheduledAt = new Date(`${dateStr}T${time}:00`).toISOString();
-      return rescheduleFn({ data: { appointmentId: appt.id, scheduledAt } });
+      const weekday = new Date(`${dateStr}T00:00:00`).getDay();
+      return rescheduleFn({ data: { appointmentId: appt.id, scheduledAt, weekday, localTime: time } });
     },
     onSuccess: () => {
       toast.success("Appointment rescheduled");

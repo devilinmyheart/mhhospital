@@ -128,7 +128,8 @@ function Book() {
         throw new Error("Please sign in to book.");
       }
       const scheduledAt = new Date(`${dateStr}T${time}:00`).toISOString();
-      return bookFn({ data: { doctorId, departmentId, scheduledAt, mode, reason: reason || undefined } });
+      const weekday = new Date(`${dateStr}T00:00:00`).getDay();
+      return bookFn({ data: { doctorId, departmentId, scheduledAt, mode, reason: reason || undefined, weekday, localTime: time } });
     },
     onSuccess: (res: any) => {
       toast.success("Appointment booked");

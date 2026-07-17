@@ -104,3 +104,56 @@ export const adminAllAppointments = createServerFn({ method: "GET" })
       .limit(200);
     return data ?? [];
   });
+
+const availabilityRowSchema = z.object({
+  weekday: z.number().int().min(0).max(6),
+  start_time: z.string(),
+  end_time: z.string(),
+  break_start: z.string().nullable().optional(),
+  break_end: z.string().nullable().optional(),
+  slot_duration_min: z.number().int().min(5).max(240).default(30),
+  max_bookings_per_slot: z.number().int().min(1).max(20).default(1),
+});
+
+export const adminGetDoctorAvailability = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ doctorId: z.string().uuid() }).parse(d))
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context);
+    const { data: doctor } = await context.supabase
+      .from("doctors")
+      .select("id, full_name, title, departments(name)")
+      .eq("id", data.doctorId)
+      .maybeSingle();
+    const { data: slots } = await context.supabase
+      .from("doctor_availability")
+      .select("id, weekday, start_time, end_time, break_start, break_end, slot_duration_min, max_bookings_per_slot")
+      .eq("doctor_id", data.doctorId)
+      .order("weekday");
+    return { doctor, slots: slots ?? [] };
+  });
+
+export const adminSetDoctorAvailability = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ doctorId: z.string().uuid(), slots: z.array(availabilityRowSchema) }).parse(d),
+  )
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context);
+    await context.supabase.from("doctor_availability").delete().eq("doctor_id", data.doctorId);
+    if (data.slots.length) {
+      const rows = data.slots.map((s) => ({
+        doctor_id: data.doctorId,
+        weekday: s.weekday,
+        start_time: s.start_time,
+        end_time: s.end_time,
+        break_start: s.break_start || null,
+        break_end: s.break_end || null,
+        slot_duration_min: s.slot_duration_min,
+        max_bookings_per_slot: s.max_bookings_per_slot,
+      }));
+      const { error } = await context.supabase.from("doctor_availability").insert(rows);
+      if (error) throw new Error(error.message);
+    }
+    return { ok: true };
+  });

@@ -27,6 +27,7 @@ import { Route as AuthenticatedDoctorAvailabilityRouteImport } from './routes/_a
 import { Route as AuthenticatedDoctorAppointmentsRouteImport } from './routes/_authenticated/doctor/appointments'
 import { Route as AuthenticatedAdminDoctorsRouteImport } from './routes/_authenticated/admin/doctors'
 import { Route as AuthenticatedAdminAvailabilityRouteImport } from './routes/_authenticated/admin/availability'
+import { Route as AuthenticatedPortalConsultationAppointmentIdRouteImport } from './routes/_authenticated/portal/consultation.$appointmentId'
 
 const PhysiciansRoute = PhysiciansRouteImport.update({
   id: '/physicians',
@@ -126,6 +127,12 @@ const AuthenticatedAdminAvailabilityRoute =
     path: '/admin/availability',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedPortalConsultationAppointmentIdRoute =
+  AuthenticatedPortalConsultationAppointmentIdRouteImport.update({
+    id: '/portal/consultation/$appointmentId',
+    path: '/portal/consultation/$appointmentId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -145,6 +152,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/doctor/': typeof AuthenticatedDoctorIndexRoute
   '/portal/': typeof AuthenticatedPortalIndexRoute
+  '/portal/consultation/$appointmentId': typeof AuthenticatedPortalConsultationAppointmentIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -164,6 +172,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/doctor': typeof AuthenticatedDoctorIndexRoute
   '/portal': typeof AuthenticatedPortalIndexRoute
+  '/portal/consultation/$appointmentId': typeof AuthenticatedPortalConsultationAppointmentIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -185,6 +194,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/doctor/': typeof AuthenticatedDoctorIndexRoute
   '/_authenticated/portal/': typeof AuthenticatedPortalIndexRoute
+  '/_authenticated/portal/consultation/$appointmentId': typeof AuthenticatedPortalConsultationAppointmentIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -206,6 +216,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/doctor/'
     | '/portal/'
+    | '/portal/consultation/$appointmentId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -225,6 +236,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/doctor'
     | '/portal'
+    | '/portal/consultation/$appointmentId'
   id:
     | '__root__'
     | '/'
@@ -245,6 +257,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/'
     | '/_authenticated/doctor/'
     | '/_authenticated/portal/'
+    | '/_authenticated/portal/consultation/$appointmentId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -386,6 +399,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminAvailabilityRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/portal/consultation/$appointmentId': {
+      id: '/_authenticated/portal/consultation/$appointmentId'
+      path: '/portal/consultation/$appointmentId'
+      fullPath: '/portal/consultation/$appointmentId'
+      preLoaderRoute: typeof AuthenticatedPortalConsultationAppointmentIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -400,6 +420,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedDoctorIndexRoute: typeof AuthenticatedDoctorIndexRoute
   AuthenticatedPortalIndexRoute: typeof AuthenticatedPortalIndexRoute
+  AuthenticatedPortalConsultationAppointmentIdRoute: typeof AuthenticatedPortalConsultationAppointmentIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -413,6 +434,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedDoctorIndexRoute: AuthenticatedDoctorIndexRoute,
   AuthenticatedPortalIndexRoute: AuthenticatedPortalIndexRoute,
+  AuthenticatedPortalConsultationAppointmentIdRoute:
+    AuthenticatedPortalConsultationAppointmentIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

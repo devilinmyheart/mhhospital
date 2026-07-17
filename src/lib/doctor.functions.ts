@@ -62,6 +62,38 @@ export const markAppointmentCompleted = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const doctorConfirmAppointment = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ appointmentId: z.string().uuid() }).parse(d))
+  .handler(async ({ context, data }) => {
+    const doctorId = await myDoctorId(context);
+    if (!doctorId) throw new Error("Not a doctor");
+    const { error } = await context.supabase
+      .from("appointments")
+      .update({ status: "booked" })
+      .eq("id", data.appointmentId)
+      .eq("doctor_id", doctorId)
+      .eq("status", "pending");
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const doctorRejectAppointment = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ appointmentId: z.string().uuid() }).parse(d))
+  .handler(async ({ context, data }) => {
+    const doctorId = await myDoctorId(context);
+    if (!doctorId) throw new Error("Not a doctor");
+    const { error } = await context.supabase
+      .from("appointments")
+      .update({ status: "rejected" })
+      .eq("id", data.appointmentId)
+      .eq("doctor_id", doctorId)
+      .eq("status", "pending");
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 const rxSchema = z.object({
   appointmentId: z.string().uuid(),
   patientId: z.string().uuid(),

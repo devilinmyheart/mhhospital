@@ -84,26 +84,35 @@ function Book() {
     if (!dateStr || !avail) return [];
     const d = new Date(dateStr + "T00:00:00");
     const wd = d.getDay();
-    const slots: string[] = [];
+    const bookedCounts = new Map<string, number>();
+    for (const b of (avail as any).booked || []) {
+      if (!b.scheduled_at.startsWith(dateStr)) continue;
+      const key = new Date(b.scheduled_at).toTimeString().slice(0, 5);
+      bookedCounts.set(key, (bookedCounts.get(key) ?? 0) + 1);
+    }
+    const out: string[] = [];
     for (const sl of (avail as any).slots) {
       if (sl.weekday !== wd) continue;
-      const [sh, sm] = sl.start_time.split(":").map(Number);
-      const [eh, em] = sl.end_time.split(":").map(Number);
-      let cur = sh * 60 + sm;
-      const end = eh * 60 + em;
-      while (cur + 30 <= end) {
+      const dur = sl.slot_duration_min ?? 30;
+      const cap = sl.max_bookings_per_slot ?? 1;
+      const toMin = (t: string) => {
+        const [h, m] = t.split(":").map(Number);
+        return h * 60 + m;
+      };
+      const start = toMin(sl.start_time);
+      const end = toMin(sl.end_time);
+      const brS = sl.break_start ? toMin(sl.break_start) : null;
+      const brE = sl.break_end ? toMin(sl.break_end) : null;
+      for (let cur = start; cur + dur <= end; cur += dur) {
+        if (brS !== null && brE !== null && cur < brE && cur + dur > brS) continue;
         const h = String(Math.floor(cur / 60)).padStart(2, "0");
         const m = String(cur % 60).padStart(2, "0");
-        slots.push(`${h}:${m}`);
-        cur += 30;
+        const key = `${h}:${m}`;
+        if ((bookedCounts.get(key) ?? 0) >= cap) continue;
+        out.push(key);
       }
     }
-    const bookedTimes = new Set(
-      ((avail as any).booked || [])
-        .filter((b: any) => b.scheduled_at.startsWith(dateStr))
-        .map((b: any) => new Date(b.scheduled_at).toISOString().slice(11, 16)),
-    );
-    return slots.filter((s) => !bookedTimes.has(s));
+    return Array.from(new Set(out)).sort();
   }, [dateStr, avail]);
 
   const bookFn = useServerFn(bookAppointment);

@@ -54,7 +54,8 @@ export const getDoctor = createServerFn({ method: "GET" })
       .maybeSingle();
     if (error) throw new Error(error.message);
     if (!doctor) return null;
-    const { data: avail } = await sb
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: avail } = await supabaseAdmin
       .from("doctor_availability")
       .select("weekday, start_time, end_time")
       .eq("doctor_id", data.doctorId)
@@ -65,13 +66,13 @@ export const getDoctor = createServerFn({ method: "GET" })
 export const getDoctorAvailability = createServerFn({ method: "GET" })
   .inputValidator((d: { doctorId: string }) => d)
   .handler(async ({ data }) => {
-    const sb = serverPublic();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const [{ data: slots }, { data: booked }] = await Promise.all([
-      sb
+      supabaseAdmin
         .from("doctor_availability")
         .select("weekday, start_time, end_time, break_start, break_end, slot_duration_min, max_bookings_per_slot")
         .eq("doctor_id", data.doctorId),
-      sb.from("appointments").select("scheduled_at, duration_min").eq("doctor_id", data.doctorId).eq("status", "booked"),
+      supabaseAdmin.from("appointments").select("scheduled_at, duration_min").eq("doctor_id", data.doctorId).eq("status", "booked"),
     ]);
     return { slots: slots ?? [], booked: booked ?? [] };
   });

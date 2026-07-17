@@ -35,15 +35,15 @@ function Contact() {
           </div>
           <div className="bg-emergency text-emergency-foreground p-6">
             <div className="mono-label mb-3 text-emergency-foreground/80">EMERGENCY LINE</div>
-            <div className="text-2xl font-bold font-mono">+91 7905932721</div>
-            <p className="text-xs opacity-90 mt-2">24-hour urgent medical assistance.</p>
+            <a href="tel:+917905932721" className="text-2xl font-bold font-mono underline-offset-4 hover:underline">+91 7905932721</a>
+            <p className="text-xs opacity-90 mt-2">24-hour urgent medical assistance. Tap to call.</p>
           </div>
           <div className="bg-card border border-border p-6">
             <div className="mono-label mb-3">GENERAL</div>
             <div className="text-sm space-y-2">
-              <div>Mobile: <span className="font-mono">+91 7905932721</span></div>
-              <div>Records: <span className="font-mono">records@mh-hospital.dev</span></div>
-              <div>Billing: <span className="font-mono">billing@mh-hospital.dev</span></div>
+              <div>Mobile: <a href="tel:+917905932721" className="font-mono text-primary underline-offset-4 hover:underline">+91 7905932721</a></div>
+              <div>Records: <a href="mailto:records@mh-hospital.dev" className="font-mono text-primary underline-offset-4 hover:underline">records@mh-hospital.dev</a></div>
+              <div>Billing: <a href="mailto:billing@mh-hospital.dev" className="font-mono text-primary underline-offset-4 hover:underline">billing@mh-hospital.dev</a></div>
             </div>
           </div>
         </div>

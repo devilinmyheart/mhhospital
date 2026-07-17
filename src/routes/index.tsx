@@ -167,7 +167,7 @@ function Home() {
 
         {/* HOW IT WORKS */}
         <section className="pb-20 lg:pb-28">
-          <div className="text-kicker mb-3">§ 03 — Method</div>
+          <div className="text-kicker mb-3">03 — METHOD</div>
           <h2 className="font-mono font-bold text-4xl md:text-5xl tracking-tight leading-none mb-12">
             Three steps.<br />No paperwork.
           </h2>

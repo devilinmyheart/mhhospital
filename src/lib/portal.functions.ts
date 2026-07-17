@@ -133,13 +133,12 @@ async function validateAndReserveSlot(
   supabase: any,
   doctorId: string,
   scheduledAt: string,
+  weekday: number,
+  hhmm: string,
   opts: { excludeAppointmentId?: string } = {},
 ) {
   const when = new Date(scheduledAt);
   if (isNaN(when.getTime())) throw new Error("Invalid time");
-  const local = new Date(when);
-  const hhmm = `${String(local.getHours()).padStart(2, "0")}:${String(local.getMinutes()).padStart(2, "0")}`;
-  const weekday = local.getDay();
 
   const { data: rules } = await supabase
     .from("doctor_availability")

@@ -14,7 +14,7 @@ export function EmergencyRibbon() {
         <span className="opacity-70 hidden sm:inline">|</span>
         <span className="hidden sm:inline">ER WAIT TIME: 14 MIN</span>
       </div>
-      <div className="hidden md:block">CALL: (555) 900-2000</div>
+      <div className="hidden md:block">CALL: +91 7905932721</div>
     </div>
   );
 }
@@ -116,9 +116,9 @@ export function SiteFooter() {
         <div>
           <h4 className="text-[10px] font-mono font-bold uppercase mb-4 tracking-widest">Locations</h4>
           <ul className="text-xs space-y-2 text-muted-foreground">
-            <li>1200 Medical Plaza</li>
-            <li>Metropolis, NY 10001</li>
-            <li className="pt-2 text-emergency font-mono">ER: (555) 900-2000</li>
+            <li>Sikarpur Road, Sinduria chauraha s 100m aage</li>
+            <li>District Maharajganj 273303</li>
+            <li className="pt-2 text-emergency font-mono">ER: +91 7905932721</li>
           </ul>
         </div>
         <div>

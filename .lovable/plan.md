@@ -1,33 +1,55 @@
+## Goal
+Give admins a place to manage multiple hospital branches and assign roles (admin, doctor, patient) to any user — with all writes restricted to admins.
 
-## The problem
+## 1. Database (single migration)
 
-After sign-in, `src/routes/auth.tsx` always navigates to `/portal` — regardless of the user's role. The admin routes at `/admin/*` exist and are functional, but nothing sends the admin user there. That's why logging in as `admin@mhhospital.com` lands on the Patient Portal.
+New `public.hospitals` table:
+- `id uuid pk`, `name text not null`, `slug text unique`, `address text`, `city text`, `state text`, `postal_code text`, `phone text`, `email text`, `emergency_phone text`, `is_active bool default true`, `image_url text`, `description text`, `created_at`, `updated_at` (+ trigger).
+- GRANTs: `SELECT` to `anon, authenticated` (public listings); `INSERT/UPDATE/DELETE` to `authenticated`; `ALL` to `service_role`.
+- RLS policies:
+  - Public read: `is_active = true` for `anon`, all rows for `authenticated`.
+  - Insert/Update/Delete: `has_role(auth.uid(), 'admin')` only.
+- Optional link: add nullable `hospital_id uuid references hospitals(id)` on `doctors` and `departments` so future entries can be scoped (non-breaking).
 
-There is no role-aware landing logic, and the site header doesn't surface an "Admin" link either, so admins have no visible entry point.
+Extra RLS on `user_roles` for admin management:
+- Existing: authenticated read-own. Add:
+  - Admins can `SELECT` all rows.
+  - Admins can `INSERT` / `DELETE` any row (`has_role(auth.uid(),'admin')`).
+- Do not allow patients/doctors to escalate themselves — only admin path.
 
-## The fix
+Seed the current MH Hospital as the first hospital row.
 
-**1. Add a `getMyRoles()` server function** (or reuse the existing one in `src/lib/portal.functions.ts`) that returns the roles for the current user from `user_roles`.
+## 2. Server functions (`src/lib/admin.functions.ts`, extend)
 
-**2. Role-aware post-login redirect in `src/routes/auth.tsx`:**
-After a successful sign-in / signup / already-signed-in check, fetch the user's roles and route to:
-- `/admin` if roles include `admin`
-- `/doctor` if roles include `doctor`
-- `/portal` otherwise (patient)
+All use `requireSupabaseAuth` + verify `has_role(userId,'admin')` via `context.supabase.rpc('has_role', ...)`. Throw 403 otherwise.
 
-The `?next=` search param, when present, still takes precedence (so deep-links keep working).
+- `listHospitals()` — admin read all (public listing already possible via existing public fn if needed).
+- `upsertHospital({ id?, ...fields })`
+- `deleteHospital({ id })`
+- `listUsersWithRoles()` — joins `profiles` + `user_roles`. Uses `supabaseAdmin` (dynamic import inside handler) to include auth email; returns `{ id, email, full_name, roles: string[] }[]`.
+- `assignRole({ userId, role })` — insert into `user_roles` (idempotent via `ON CONFLICT DO NOTHING`).
+- `removeRole({ userId, role })` — delete; block removing the caller's own last `admin` role to prevent lockout.
 
-**3. Add a role-based nav badge in `src/components/site-header.tsx`:**
-When signed in, show a "Portal" link that points to the user's correct landing route (Admin / Doctor / Patient) based on role, so the admin has a one-click way in from anywhere.
+## 3. Routes (all under existing admin gate)
 
-**4. Guard the wrong-portal case gracefully:**
-`/_authenticated/admin/*` routes already check `assertAdmin()` via `admin.functions.ts`. Add a small `beforeLoad` (or loader redirect) on `/portal` and `/admin` so if an admin lands on `/portal` directly, they're bounced to `/admin`, and non-admins hitting `/admin` are bounced to `/portal`. This prevents future confusion.
+`src/routes/_authenticated/admin/hospitals.tsx`
+- Table of hospitals with columns: name, city, phone, active toggle, actions.
+- "New hospital" dialog + "Edit" dialog sharing one form (name/address/city/state/postal/phone/email/emergency/image/description/active).
+- Delete with confirm.
 
-## Files touched
+`src/routes/_authenticated/admin/users.tsx`
+- Search box (client-side filter over email/name).
+- Row per user: shows current role chips (admin/doctor/patient) with an "×" to remove, plus an "Add role" dropdown → calls `assignRole`.
+- Warn on removing last admin (server enforces too).
 
-- `src/routes/auth.tsx` — role-aware redirect after auth
-- `src/components/site-header.tsx` — dynamic "Portal" link based on role
-- `src/routes/_authenticated/portal/index.tsx` + `src/routes/_authenticated/admin/index.tsx` — optional loader-side role redirect
-- `src/lib/portal.functions.ts` — ensure `getMyRoles()` is exported (already exists)
+Update `src/routes/_authenticated/admin/index.tsx` sidebar/nav to link both new pages.
 
-No database or RLS changes are required — the `admin` role is already assigned to your account and the admin pages already work; this is purely a routing/UX fix.
+## 4. Header/portal nav
+Already role-aware (admin → `/admin`). Just add the two new links inside the admin layout nav; no header change needed.
+
+## 5. Notes / non-goals
+- No changes to appointment/doctor logic beyond adding optional `hospital_id` column (nullable, non-breaking).
+- Role assignment UI is admin-only; patients still self-register as `patient` via existing `handle_new_user` trigger.
+- No email invitations in this pass — role assignment operates on users who already exist in `auth.users`.
+
+Confirm and I'll implement in one build pass (migration first, then code).

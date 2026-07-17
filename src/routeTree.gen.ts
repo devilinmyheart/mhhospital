@@ -27,8 +27,10 @@ import { Route as AuthenticatedPortalPrescriptionsRouteImport } from './routes/_
 import { Route as AuthenticatedPortalAppointmentsRouteImport } from './routes/_authenticated/portal/appointments'
 import { Route as AuthenticatedDoctorAvailabilityRouteImport } from './routes/_authenticated/doctor/availability'
 import { Route as AuthenticatedDoctorAppointmentsRouteImport } from './routes/_authenticated/doctor/appointments'
+import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
 import { Route as AuthenticatedAdminReviewsRouteImport } from './routes/_authenticated/admin/reviews'
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin/messages'
+import { Route as AuthenticatedAdminHospitalsRouteImport } from './routes/_authenticated/admin/hospitals'
 import { Route as AuthenticatedAdminDoctorsRouteImport } from './routes/_authenticated/admin/doctors'
 import { Route as AuthenticatedAdminDepartmentsRouteImport } from './routes/_authenticated/admin/departments'
 import { Route as AuthenticatedAdminAvailabilityRouteImport } from './routes/_authenticated/admin/availability'
@@ -131,6 +133,11 @@ const AuthenticatedDoctorAppointmentsRoute =
     path: '/doctor/appointments',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
+  id: '/admin/users',
+  path: '/admin/users',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAdminReviewsRoute =
   AuthenticatedAdminReviewsRouteImport.update({
     id: '/admin/reviews',
@@ -141,6 +148,12 @@ const AuthenticatedAdminMessagesRoute =
   AuthenticatedAdminMessagesRouteImport.update({
     id: '/admin/messages',
     path: '/admin/messages',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminHospitalsRoute =
+  AuthenticatedAdminHospitalsRouteImport.update({
+    id: '/admin/hospitals',
+    path: '/admin/hospitals',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAdminDoctorsRoute =
@@ -188,8 +201,10 @@ export interface FileRoutesByFullPath {
   '/admin/availability': typeof AuthenticatedAdminAvailabilityRoute
   '/admin/departments': typeof AuthenticatedAdminDepartmentsRoute
   '/admin/doctors': typeof AuthenticatedAdminDoctorsRoute
+  '/admin/hospitals': typeof AuthenticatedAdminHospitalsRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/reviews': typeof AuthenticatedAdminReviewsRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/doctor/appointments': typeof AuthenticatedDoctorAppointmentsRoute
   '/doctor/availability': typeof AuthenticatedDoctorAvailabilityRoute
   '/portal/appointments': typeof AuthenticatedPortalAppointmentsRoute
@@ -214,8 +229,10 @@ export interface FileRoutesByTo {
   '/admin/availability': typeof AuthenticatedAdminAvailabilityRoute
   '/admin/departments': typeof AuthenticatedAdminDepartmentsRoute
   '/admin/doctors': typeof AuthenticatedAdminDoctorsRoute
+  '/admin/hospitals': typeof AuthenticatedAdminHospitalsRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/reviews': typeof AuthenticatedAdminReviewsRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/doctor/appointments': typeof AuthenticatedDoctorAppointmentsRoute
   '/doctor/availability': typeof AuthenticatedDoctorAvailabilityRoute
   '/portal/appointments': typeof AuthenticatedPortalAppointmentsRoute
@@ -242,8 +259,10 @@ export interface FileRoutesById {
   '/_authenticated/admin/availability': typeof AuthenticatedAdminAvailabilityRoute
   '/_authenticated/admin/departments': typeof AuthenticatedAdminDepartmentsRoute
   '/_authenticated/admin/doctors': typeof AuthenticatedAdminDoctorsRoute
+  '/_authenticated/admin/hospitals': typeof AuthenticatedAdminHospitalsRoute
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/_authenticated/admin/reviews': typeof AuthenticatedAdminReviewsRoute
+  '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/doctor/appointments': typeof AuthenticatedDoctorAppointmentsRoute
   '/_authenticated/doctor/availability': typeof AuthenticatedDoctorAvailabilityRoute
   '/_authenticated/portal/appointments': typeof AuthenticatedPortalAppointmentsRoute
@@ -270,8 +289,10 @@ export interface FileRouteTypes {
     | '/admin/availability'
     | '/admin/departments'
     | '/admin/doctors'
+    | '/admin/hospitals'
     | '/admin/messages'
     | '/admin/reviews'
+    | '/admin/users'
     | '/doctor/appointments'
     | '/doctor/availability'
     | '/portal/appointments'
@@ -296,8 +317,10 @@ export interface FileRouteTypes {
     | '/admin/availability'
     | '/admin/departments'
     | '/admin/doctors'
+    | '/admin/hospitals'
     | '/admin/messages'
     | '/admin/reviews'
+    | '/admin/users'
     | '/doctor/appointments'
     | '/doctor/availability'
     | '/portal/appointments'
@@ -323,8 +346,10 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/availability'
     | '/_authenticated/admin/departments'
     | '/_authenticated/admin/doctors'
+    | '/_authenticated/admin/hospitals'
     | '/_authenticated/admin/messages'
     | '/_authenticated/admin/reviews'
+    | '/_authenticated/admin/users'
     | '/_authenticated/doctor/appointments'
     | '/_authenticated/doctor/availability'
     | '/_authenticated/portal/appointments'
@@ -477,6 +502,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDoctorAppointmentsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/users': {
+      id: '/_authenticated/admin/users'
+      path: '/admin/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/reviews': {
       id: '/_authenticated/admin/reviews'
       path: '/admin/reviews'
@@ -489,6 +521,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/messages'
       fullPath: '/admin/messages'
       preLoaderRoute: typeof AuthenticatedAdminMessagesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/hospitals': {
+      id: '/_authenticated/admin/hospitals'
+      path: '/admin/hospitals'
+      fullPath: '/admin/hospitals'
+      preLoaderRoute: typeof AuthenticatedAdminHospitalsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/doctors': {
@@ -534,8 +573,10 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminAvailabilityRoute: typeof AuthenticatedAdminAvailabilityRoute
   AuthenticatedAdminDepartmentsRoute: typeof AuthenticatedAdminDepartmentsRoute
   AuthenticatedAdminDoctorsRoute: typeof AuthenticatedAdminDoctorsRoute
+  AuthenticatedAdminHospitalsRoute: typeof AuthenticatedAdminHospitalsRoute
   AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
   AuthenticatedAdminReviewsRoute: typeof AuthenticatedAdminReviewsRoute
+  AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedDoctorAppointmentsRoute: typeof AuthenticatedDoctorAppointmentsRoute
   AuthenticatedDoctorAvailabilityRoute: typeof AuthenticatedDoctorAvailabilityRoute
   AuthenticatedPortalAppointmentsRoute: typeof AuthenticatedPortalAppointmentsRoute
@@ -552,8 +593,10 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminAvailabilityRoute: AuthenticatedAdminAvailabilityRoute,
   AuthenticatedAdminDepartmentsRoute: AuthenticatedAdminDepartmentsRoute,
   AuthenticatedAdminDoctorsRoute: AuthenticatedAdminDoctorsRoute,
+  AuthenticatedAdminHospitalsRoute: AuthenticatedAdminHospitalsRoute,
   AuthenticatedAdminMessagesRoute: AuthenticatedAdminMessagesRoute,
   AuthenticatedAdminReviewsRoute: AuthenticatedAdminReviewsRoute,
+  AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedDoctorAppointmentsRoute: AuthenticatedDoctorAppointmentsRoute,
   AuthenticatedDoctorAvailabilityRoute: AuthenticatedDoctorAvailabilityRoute,
   AuthenticatedPortalAppointmentsRoute: AuthenticatedPortalAppointmentsRoute,

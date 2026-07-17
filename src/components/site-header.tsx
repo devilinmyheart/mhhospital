@@ -115,7 +115,7 @@ export function SiteFooter() {
               MH<span className="text-primary">·</span>HOSPITAL
             </div>
             <p className="text-sm text-muted-foreground max-w-sm leading-relaxed">
-              A community hospital in Maharajganj built on clinical excellence and patient-first digital care.
+              A community hospital in Sinduria,Maharajganj built on clinical excellence and patient-first digital care.
             </p>
           </div>
           <div className="md:col-span-3">

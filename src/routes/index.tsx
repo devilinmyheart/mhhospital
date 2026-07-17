@@ -45,7 +45,7 @@ function Home() {
                 BOOK APPOINTMENT
               </Link>
               <Link to="/physicians" className="border border-border text-sm font-semibold px-5 py-2.5 rounded-sm hover:bg-accent">
-                Find a physician
+                Find a Doc
               </Link>
             </div>
           </section>

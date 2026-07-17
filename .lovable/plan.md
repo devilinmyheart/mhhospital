@@ -1,84 +1,59 @@
+## Redesign direction
 
-# MH Hospital — Build Plan
+- **Palette**: Cloud White base (`#fafbfc` / `#e8ecf1`), deep navy ink (`#0c2340`), coral accent (`#ff6b6b`) reserved for emergency + primary CTAs.
+- **Type**: JetBrains Mono for headings, labels, and numeric data (keeps the operational-dashboard DNA). Work Sans for body/long-form.
+- **Layout**: Magazine — a large featured hero with editorial typography, followed by a structured grid of departments, physicians, stats, and stories.
+- **Visual richness: 3/5** — refined, not cinematic. Light textures, one hero image, tasteful motion.
 
-Building the "Operational Dashboard" direction: dense, precise, mono-accented, blue primary + red emergency ribbon, JetBrains Mono labels + Inter body.
+## Homepage (`src/routes/index.tsx`) rebuild
 
-## Scope (v1)
+Sections, top to bottom:
 
-### Public site (no login required)
-- **Home (`/`)** — Emergency ribbon, hero "Patient Operations Center", featured departments, medical directorship, Quick Schedule widget, telemedicine card, testimonial, footer.
-- **Departments (`/departments`)** — grid of all specialties (Cardiology, Neurology, Oncology, Orthopedics, Pediatrics, General Practice, etc.) with descriptions and specialist counts.
-- **Physicians (`/physicians`)** — searchable/filterable doctor directory with department filter, availability badge, "Book" CTA per doctor. Detail route `/physicians/$doctorId`.
-- **Book Appointment (`/book`)** — 3-step wizard: pick department/doctor → pick date → pick time slot → confirm. Supports "In-person" or "Video consultation" mode.
-- **About / Contact (`/about`, `/contact`)** — hospital info, hours, emergency line, location.
-- **Auth (`/auth`)** — sign up / sign in (email + password + Google).
+1. **Editorial hero (featured story style)**
+   - Left column: kicker label ("ISSUE 01 · CARE DIVISION"), oversized mixed serif-feel heading using JetBrains Mono weight play ("Care, on your schedule."), lead paragraph, primary coral CTA "Book appointment" + ghost "Meet the physicians".
+   - Right column: generated hero image (calm clinical portrait), floating stat card overlay ("24/7 ER · 7905932721") and a mono-label caption strip.
+2. **Ticker strip**: horizontal marquee of departments / ER number / "Now accepting video visits" in mono caps on a light band.
+3. **Departments grid (magazine cards)**: 6 department tiles, numbered `01–06`, hover reveals coral underline + arrow. Mono numerals, Work Sans description.
+4. **Featured physicians**: asymmetric grid — one large "Editor's pick" card (Dr. Khurshid Alam) + 3 smaller cards. Each with generated portrait, specialty tag, "Book" link.
+5. **How it works** (3-step editorial): "Choose · Confirm · Consult" with mono step numbers and thin dividers.
+6. **Stats band**: 4 numeric stats (patients, physicians, specialties, avg. wait) in giant mono figures on the light-gray band.
+7. **Pull-quote / patient story**: single large blockquote with coral quote mark.
+8. **CTA footer band**: "Need urgent care? Call +91 7905932721" with coral background.
 
-### Patient portal (`/_authenticated/portal/*`)
-- **Dashboard** — Next appointment, active prescriptions, pending reports (mirrors homepage hero widgets, but with real data).
-- **Appointments** — list of upcoming/past appointments, cancel/reschedule.
-- **Prescriptions** — list of prescriptions issued by doctors, refill status.
-- **Reports** — list of medical reports uploaded by doctors, download link.
-- **Consultation room (`/portal/consult/$appointmentId`)** — for video appointments, placeholder video UI (Jitsi-embed style iframe stub) + chat area. Real video SDK is out of v1 scope; we build the room shell that any WebRTC provider can drop into later.
+Motion: subtle `fade-in`/`slide-in` on scroll (using existing tailwind animations), hover lift on cards, marquee ticker. No heavy parallax.
 
-### Doctor portal (`/_authenticated/doctor/*`)
-- **Dashboard** — today's appointments, quick stats.
-- **Schedule** — set availability slots (day + time ranges).
-- **Appointments** — see assigned patient appointments, mark completed, add notes.
-- **Issue prescription / upload report** — attached to a completed appointment.
+## Design tokens (`src/styles.css`)
 
-### Admin portal (`/_authenticated/admin/*`)
-- **Overview** — counts of doctors, patients, appointments today.
-- **Manage doctors** — create doctor profile, assign department, activate/deactivate.
-- **Manage departments** — CRUD departments.
-- **All appointments** — read-only oversight table.
+- Update semantic tokens: `--background` `#fafbfc`, `--foreground` `#0c2340`, `--muted` `#e8ecf1`, `--primary` coral `#ff6b6b` with navy `--primary-foreground`, `--accent` navy, `--border` soft gray.
+- Add `--gradient-editorial` (subtle navy→transparent), `--shadow-editorial` (soft, low), `--color-coral`, `--color-ink`.
+- Keep JetBrains Mono / Work Sans font tokens (already loaded in root head).
+- Add a `.text-kicker` utility (mono, uppercase, tracked) and `.editorial-rule` (thin navy divider) via `@utility`.
 
-Role gating is enforced with `has_role()` in RLS and re-checked in server functions.
+## Shared components
 
-## Technical plan
+- **`SiteHeader`**: lighten background to Cloud White, ink text, coral ER pill, mono nav labels, thin bottom rule. Keep address/ER content unchanged.
+- **`EmergencyRibbon`**: slimmer, coral left border on white instead of solid red block; mono uppercase text.
+- **`SiteFooter`**: three-column editorial footer with mono column titles and a large wordmark.
+- **New**: `components/marquee-ticker.tsx`, `components/editorial-card.tsx`, `components/stat-figure.tsx`, `components/section-heading.tsx` (kicker + big title + rule).
 
-### Stack
-TanStack Start (already scaffolded) + Lovable Cloud (Supabase) for auth, database, storage. TanStack Query for all data fetching, `createServerFn` for privileged/auth reads, publishable-key server client for public reads (departments, physicians directory).
+## Other public routes (light polish, no logic changes)
 
-### Database (Lovable Cloud migration)
-- `app_role` enum: `patient | doctor | admin`
-- `user_roles(user_id, role)` + `has_role()` security-definer function (per user-roles rules)
-- `profiles(id → auth.users, full_name, phone, date_of_birth, created_at)` — auto-created on signup via trigger
-- `departments(id, name, slug, description, specialist_count)`
-- `doctors(id, user_id → auth.users nullable, full_name, department_id, title, bio, photo_url, is_active)`
-- `doctor_availability(id, doctor_id, weekday 0-6, start_time, end_time)` — recurring weekly slots
-- `appointments(id, patient_id → auth.users, doctor_id, department_id, scheduled_at, duration_min, mode enum in_person|video, status enum booked|completed|cancelled, reason, created_at)`
-- `prescriptions(id, appointment_id, patient_id, doctor_id, medications jsonb, notes, issued_at)`
-- `medical_reports(id, patient_id, doctor_id, appointment_id nullable, title, file_path, uploaded_at)` — file in Storage bucket `medical-reports` (private).
+- `physicians.tsx`, `book.tsx`, `contact.tsx`, `departments/*` inherit new tokens automatically; add `SectionHeading` at top of each and swap card chrome to the editorial style. No behavior/schema changes.
 
-All tables get `GRANT`s (authenticated + service_role, plus `anon SELECT` on `departments`, `doctors`, `doctor_availability` which are public), RLS enabled, and policies:
-- patients see their own appointments/prescriptions/reports/profile
-- doctors see appointments where they are the doctor + related prescriptions/reports
-- admins see all (via `has_role(auth.uid(),'admin')`)
-- public reads on departments, active doctors, availability
+## Assets
 
-Seed migration inserts departments and a few doctor rows so the site is not empty on first load.
+- Generate 2 images with `imagegen`:
+  1. `src/assets/hero-clinic.jpg` — bright, airy clinical corridor / clinician portrait, cloud white + navy palette.
+  2. `src/assets/editorial-story.jpg` — patient-and-doctor moment for the pull-quote section.
+- Physician portraits: reuse existing avatars; if missing, use a soft mono initial tile.
 
-### Server functions
-- `listDepartments`, `listDoctors({ departmentId? })`, `getDoctor(id)`, `getDoctorAvailability(doctorId, dateRange)` — public, server publishable client.
-- `bookAppointment` — auth-required, validates slot is free and within availability.
-- `getMyAppointments`, `cancelAppointment` — patient, RLS via `requireSupabaseAuth`.
-- `getDoctorSchedule`, `setDoctorAvailability`, `markAppointmentCompleted`, `issuePrescription`, `uploadReport` — doctor role checked.
-- `adminListDoctors`, `createDoctor`, `updateDepartment`, `adminListAppointments` — admin role checked.
+## Out of scope
 
-### Design system (`src/styles.css`)
-Port the direction's tokens as oklch: `--primary` (blue), `--emergency` (red), `--background` (near-white), `--foreground`, `--muted`, `--border`. Add `--font-mono` (JetBrains Mono) and `--font-sans` (Inter), loaded via `<link>` in `__root.tsx` head. Add `slideUp` animate-enter utility. Sharp corners (`rounded-sm`), thin borders, dense typography, uppercase mono micro-labels.
+- No changes to auth, portals, RLS, server functions, database, or booking logic.
+- No new dependencies.
+- Email/notifications untouched.
 
-### Root layout
-`__root.tsx` gets meta ("MH Hospital — Advanced Medical Care & Online Consultation"), Google Fonts link, `QueryClientProvider`, `Toaster`, sticky top nav + emergency ribbon on public routes, and an auth-aware sign-in/portal link.
+## Verification
 
-### Auth
-Email/password + Google (via Lovable broker). On signup, trigger inserts `profiles` row + assigns `patient` role by default. Password reset page at `/reset-password`. Doctor and admin roles are assigned by an admin from the admin portal (first admin seeded via migration if the user provides an email — otherwise assigned manually after signup).
-
-### Out of scope for v1 (called out honestly)
-- Real WebRTC video — we ship a consult room shell with a placeholder video panel and chat, ready to wire into Daily/Jitsi/Twilio later.
-- Payments/insurance.
-- SMS notifications.
-- Live ER wait time — shown as static content ("Emergency 24/7") on the ribbon.
-
-## Deliverables in this build turn
-Enable Lovable Cloud, run the full migration + seed, add design tokens, build all routes above with real data wired end-to-end, and populate seed data so the homepage renders with real departments and doctors immediately.
+- `bun run build` clean.
+- Visit `/` in preview, screenshot at 1280×1800 to confirm hero, grid, stats, and CTA bands render as intended and coral is only on CTAs + ER.

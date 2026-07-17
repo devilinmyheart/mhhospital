@@ -110,7 +110,7 @@ export function SiteFooter() {
       <div className="max-w-7xl mx-auto px-4 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 mb-16">
           <div className="md:col-span-5">
-            <div className="text-kicker mb-4">Issue 01 · Est. 2010</div>
+            <div className="text-kicker mb-4">EST. 2010</div>
             <div className="font-mono font-bold tracking-tight text-4xl md:text-5xl leading-[0.95] mb-6">
               MH<span className="text-primary">·</span>HOSPITAL
             </div>

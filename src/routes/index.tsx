@@ -81,39 +81,39 @@ function Home() {
       <SiteHeader />
 
       {/* HERO — editorial split */}
-      <section className="border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 lg:px-8 pt-10 lg:pt-16 pb-14 lg:pb-20 grid grid-cols-12 gap-6 lg:gap-10 xl:gap-12 items-end">
-          <div className="col-span-12 xl:col-span-7 min-w-0 animate-enter">
+      <section className="border-b border-border overflow-hidden">
+        <div className="max-w-[92rem] mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 lg:pt-14 pb-12 lg:pb-16 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(290px,38vw)] xl:grid-cols-[minmax(0,1fr)_minmax(380px,500px)] gap-10 lg:gap-12 xl:gap-16 items-center">
+          <div className="min-w-0 max-w-[46rem] lg:max-w-none [container-type:inline-size] animate-enter">
             <div className="flex items-center gap-3 mb-8">
               <span className="text-kicker">{"\n"}</span>
               <span className="editorial-rule flex-1 max-w-24" />
               <span className="text-kicker !text-muted-foreground">Care Division</span>
             </div>
             <h1
-              className="font-mono font-bold tracking-[-0.03em] leading-[0.92] max-w-full [word-break:break-word] hyphens-none"
-              style={{ fontSize: "clamp(2.25rem, 8.5vw, 6.5rem)" }}
+              className="font-mono font-bold tracking-normal leading-[0.94] max-w-full text-balance [overflow-wrap:normal] hyphens-none"
+              style={{ fontSize: "clamp(2.25rem, 11.5cqw, 5.85rem)" }}
             >
               Care for your <br />
               loved one<br />
-              on your&nbsp;
-              <span className="italic font-normal text-primary inline-block max-w-full text-[0.9em]">schedule</span>
+              on your{" "}
+              <span className="italic font-normal text-primary block 2xl:inline max-w-full text-[0.9em]">schedule</span>
             </h1>
-            <p className="mt-8 text-base lg:text-lg text-muted-foreground max-w-xl leading-relaxed">
+            <p className="mt-6 sm:mt-8 text-base lg:text-lg text-muted-foreground max-w-xl leading-relaxed">
               Book in-person visits, launch video consultations, and access your medical records — from a single patient portal built for Maharajganj.
             </p>
-            <div className="mt-10 flex flex-wrap gap-3 items-center">
-              <Link to="/book" className="group inline-flex items-center gap-3 bg-foreground text-background px-6 py-4 font-mono text-[12px] tracking-[0.2em] uppercase hover:bg-primary transition-colors">
+            <div className="mt-8 sm:mt-10 grid grid-cols-1 min-[420px]:flex min-[420px]:flex-wrap gap-3 items-center">
+              <Link to="/book" className="group inline-flex items-center justify-center gap-3 bg-foreground text-background px-5 sm:px-6 py-4 font-mono text-[12px] tracking-[0.2em] uppercase hover:bg-primary transition-colors">
                 Book appointment
                 <span className="transition-transform group-hover:translate-x-1">→</span>
               </Link>
-              <Link to="/physicians" className="inline-flex items-center gap-3 border border-border px-6 py-4 font-mono text-[12px] tracking-[0.2em] uppercase hover:border-foreground transition-colors">
+              <Link to="/physicians" className="inline-flex items-center justify-center gap-3 border border-border px-5 sm:px-6 py-4 font-mono text-[12px] tracking-[0.2em] uppercase hover:border-foreground transition-colors">
                 MEET DOCTORS
               </Link>
             </div>
           </div>
 
-          <div className="col-span-12 xl:col-span-5 relative animate-enter">
-            <div className="relative aspect-[4/5] overflow-hidden bg-muted">
+          <div className="relative min-w-0 w-full max-w-[34rem] lg:max-w-none justify-self-center lg:justify-self-stretch animate-enter">
+            <div className="relative min-h-[20rem] max-h-[42rem] aspect-[16/11] sm:aspect-[4/3] lg:aspect-[4/5] overflow-hidden bg-muted">
               <img
                 src={heroClinic}
                 alt="Sunlit hospital corridor at MH Hospital"
@@ -126,9 +126,9 @@ function Home() {
                 <span>PLATE 01</span>
                 <span>MH·MRJ</span>
               </div>
-              <div className="absolute bottom-6 left-6 right-6 text-background">
+              <div className="absolute bottom-5 sm:bottom-6 left-5 sm:left-6 right-5 sm:right-6 text-background">
                 <div className="text-kicker !text-primary mb-2">Emergency line</div>
-                <div className="font-mono text-2xl lg:text-3xl font-bold tracking-tight">
+                <div className="font-mono text-xl sm:text-2xl xl:text-3xl font-bold tracking-normal [overflow-wrap:anywhere]">
                   +91 7905 932 721
                 </div>
                 <div className="text-[11px] font-mono uppercase tracking-widest opacity-80 mt-1">
@@ -136,7 +136,7 @@ function Home() {
                 </div>
               </div>
             </div>
-            <div className="absolute -left-3 -top-3 hidden lg:flex flex-col items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-muted-foreground rotate-180" style={{ writingMode: "vertical-rl" }}>
+            <div className="absolute -left-3 -top-3 hidden xl:flex flex-col items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-muted-foreground rotate-180" style={{ writingMode: "vertical-rl" }}>
               <span>MH Hospital · Maharajganj · Est. 2010</span>
             </div>
           </div>

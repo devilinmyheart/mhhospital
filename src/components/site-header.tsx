@@ -42,7 +42,7 @@ export function SiteHeader() {
       <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b border-border px-4 h-14 flex items-center justify-between">
         <div className="flex items-center gap-8">
           <Link to="/" className="font-bold tracking-tighter text-lg">
-            MH<span className="text-primary">HOSPITAL</span>
+            MH<span className="text-primary">&nbsp;HOSPITAL</span>
           </Link>
           <div className="hidden lg:flex gap-6 text-[13px] font-medium text-muted-foreground">
             <Link to="/departments" className="hover:text-foreground" activeProps={{ className: "text-foreground" }}>
@@ -104,7 +104,7 @@ export function SiteFooter() {
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
         <div className="col-span-2">
           <div className="font-bold tracking-tighter text-xl mb-4">
-            MH<span className="text-primary">HOSPITAL</span>
+            MH<span className="text-primary">&nbsp;HOSPITAL</span>
           </div>
           <p className="text-xs text-muted-foreground max-w-sm mb-6">
             A leading care institution dedicated to the intersection of clinical excellence and patient-first digital systems.

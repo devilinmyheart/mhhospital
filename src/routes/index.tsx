@@ -53,7 +53,7 @@ function Home() {
         <div className="max-w-7xl mx-auto px-4 lg:px-8 pt-10 lg:pt-16 pb-14 lg:pb-20 grid grid-cols-12 gap-6 lg:gap-10 items-end">
           <div className="col-span-12 lg:col-span-7 animate-enter">
             <div className="flex items-center gap-3 mb-8">
-              <span className="text-kicker">Issue 01</span>
+              <span className="text-kicker">ISSU</span>
               <span className="editorial-rule flex-1 max-w-24" />
               <span className="text-kicker !text-muted-foreground">Care Division</span>
             </div>

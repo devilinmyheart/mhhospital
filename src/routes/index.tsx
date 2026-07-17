@@ -82,14 +82,14 @@ function Home() {
 
       {/* HERO — editorial split */}
       <section className="border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 lg:px-8 pt-10 lg:pt-16 pb-14 lg:pb-20 grid grid-cols-12 gap-6 lg:gap-10 items-end">
-          <div className="col-span-12 lg:col-span-7 animate-enter">
+        <div className="max-w-7xl mx-auto px-4 lg:px-8 pt-10 lg:pt-16 pb-14 lg:pb-20 grid grid-cols-12 gap-6 lg:gap-10 xl:gap-12 items-end">
+          <div className="col-span-12 xl:col-span-7 min-w-0 animate-enter">
             <div className="flex items-center gap-3 mb-8">
               <span className="text-kicker">{"\n"}</span>
               <span className="editorial-rule flex-1 max-w-24" />
               <span className="text-kicker !text-muted-foreground">Care Division</span>
             </div>
-            <h1 className="font-mono font-bold tracking-[-0.03em] leading-[0.92] text-[52px] sm:text-[72px] lg:text-[104px]">
+            <h1 className="font-mono font-bold tracking-[-0.03em] leading-[0.92] text-[44px] sm:text-[64px] lg:text-[84px] xl:text-[96px] break-words">
               Care for your <br />
               loved one<br />
               on your&nbsp;
@@ -109,7 +109,7 @@ function Home() {
             </div>
           </div>
 
-          <div className="col-span-12 lg:col-span-5 relative animate-enter">
+          <div className="col-span-12 xl:col-span-5 relative animate-enter">
             <div className="relative aspect-[4/5] overflow-hidden bg-muted">
               <img
                 src={heroClinic}

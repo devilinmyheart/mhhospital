@@ -110,7 +110,7 @@ export const adminUpdateAppointment = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z.object({
       id: z.string().uuid(),
-      status: z.enum(["scheduled", "completed", "cancelled", "no_show"]).optional(),
+      status: z.enum(["booked", "completed", "cancelled"]).optional(),
       notes: z.string().max(2000).optional(),
     }).parse(d),
   )

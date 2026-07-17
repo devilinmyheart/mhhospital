@@ -100,26 +100,38 @@ export type Database = {
       }
       doctor_availability: {
         Row: {
+          break_end: string | null
+          break_start: string | null
           created_at: string
           doctor_id: string
           end_time: string
           id: string
+          max_bookings_per_slot: number
+          slot_duration_min: number
           start_time: string
           weekday: number
         }
         Insert: {
+          break_end?: string | null
+          break_start?: string | null
           created_at?: string
           doctor_id: string
           end_time: string
           id?: string
+          max_bookings_per_slot?: number
+          slot_duration_min?: number
           start_time: string
           weekday: number
         }
         Update: {
+          break_end?: string | null
+          break_start?: string | null
           created_at?: string
           doctor_id?: string
           end_time?: string
           id?: string
+          max_bookings_per_slot?: number
+          slot_duration_min?: number
           start_time?: string
           weekday?: number
         }

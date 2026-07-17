@@ -112,6 +112,39 @@ export const bookAppointment = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => bookSchema.parse(d))
   .handler(async ({ context, data }) => {
+    const when = new Date(data.scheduledAt);
+    if (isNaN(when.getTime())) throw new Error("Invalid time");
+    const weekday = when.getUTCDay();
+    // Use local time components for comparison with time-of-day values.
+    const local = new Date(when);
+    const hhmm = `${String(local.getHours()).padStart(2, "0")}:${String(local.getMinutes()).padStart(2, "0")}`;
+
+    const { data: rules } = await context.supabase
+      .from("doctor_availability")
+      .select("weekday, start_time, end_time, break_start, break_end, slot_duration_min, max_bookings_per_slot")
+      .eq("doctor_id", data.doctorId)
+      .eq("weekday", new Date(when.toISOString().slice(0, 10) + "T00:00:00").getDay());
+    const rule = (rules ?? []).find((r: any) => {
+      if (r.weekday !== new Date(data.scheduledAt).getDay()) return false;
+      if (hhmm < r.start_time.slice(0, 5) || hhmm >= r.end_time.slice(0, 5)) return false;
+      if (r.break_start && r.break_end && hhmm >= r.break_start.slice(0, 5) && hhmm < r.break_end.slice(0, 5)) return false;
+      return true;
+    });
+    if (!rule) throw new Error("Selected time is outside the doctor's availability.");
+
+    const slotStart = new Date(when);
+    const slotEnd = new Date(when.getTime() + rule.slot_duration_min * 60_000);
+    const { count } = await context.supabase
+      .from("appointments")
+      .select("id", { count: "exact", head: true })
+      .eq("doctor_id", data.doctorId)
+      .eq("status", "booked")
+      .gte("scheduled_at", slotStart.toISOString())
+      .lt("scheduled_at", slotEnd.toISOString());
+    if ((count ?? 0) >= rule.max_bookings_per_slot) {
+      throw new Error("This slot is fully booked.");
+    }
+
     const { data: appt, error } = await context.supabase
       .from("appointments")
       .insert({
@@ -119,6 +152,7 @@ export const bookAppointment = createServerFn({ method: "POST" })
         doctor_id: data.doctorId,
         department_id: data.departmentId,
         scheduled_at: data.scheduledAt,
+        duration_min: rule.slot_duration_min,
         mode: data.mode,
         reason: data.reason ?? null,
         status: "booked",

@@ -23,7 +23,7 @@ function Contact() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-card border border-border p-6">
             <div className="mono-label mb-3">LOCATION</div>
-            <p className="text-sm">1200 Medical Plaza<br />Metropolis, NY 10001<br />United States</p>
+            <p className="text-sm">Sikarpur Road, Sinduria chauraha s 100m aage<br />District Maharajganj 273303<br />India</p>
           </div>
           <div className="bg-card border border-border p-6">
             <div className="mono-label mb-3">HOURS</div>
@@ -35,13 +35,13 @@ function Contact() {
           </div>
           <div className="bg-emergency text-emergency-foreground p-6">
             <div className="mono-label mb-3 text-emergency-foreground/80">EMERGENCY LINE</div>
-            <div className="text-2xl font-bold font-mono">(555) 900-2000</div>
+            <div className="text-2xl font-bold font-mono">+91 7905932721</div>
             <p className="text-xs opacity-90 mt-2">24-hour urgent medical assistance.</p>
           </div>
           <div className="bg-card border border-border p-6">
             <div className="mono-label mb-3">GENERAL</div>
             <div className="text-sm space-y-2">
-              <div>Main: <span className="font-mono">(555) 900-1000</span></div>
+              <div>Mobile: <span className="font-mono">+91 7905932721</span></div>
               <div>Records: <span className="font-mono">records@mh-hospital.dev</span></div>
               <div>Billing: <span className="font-mono">billing@mh-hospital.dev</span></div>
             </div>

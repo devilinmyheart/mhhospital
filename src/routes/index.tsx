@@ -157,7 +157,7 @@ function Home() {
         <section className="py-20 lg:py-28">
           <div className="flex items-end justify-between mb-12 flex-wrap gap-4">
             <div>
-              <div className="text-kicker mb-3">01 — DEPARTMENTS</div>
+              <div className="text-kicker mb-3">DEPARTMENTS</div>
               <h2 className="font-mono font-bold text-4xl md:text-5xl tracking-tight leading-none">
                 Where we<br />look after you.
               </h2>
@@ -168,30 +168,22 @@ function Home() {
           </div>
           <div className="editorial-rule mb-10" />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-border">
-            {departments.slice(0, 6).map((d, idx) => (
+            {departments.slice(0, 6).map((dept, i) => (
               <Link
-                key={d.id}
-                to="/physicians"
-                search={{ dept: d.slug } as any}
-                className="group bg-background p-8 hover:bg-foreground hover:text-background transition-colors relative"
+                key={dept.id}
+                to="/departments"
+                search={{ id: dept.id }}
+                className="bg-background p-8 lg:p-10 hover:bg-muted transition-colors group"
               >
-                <div className="flex justify-between items-start mb-16">
-                  <span className="font-mono text-[11px] tracking-widest text-muted-foreground group-hover:text-background/60">
-                    {String(idx + 1).padStart(2, "0")}
-                  </span>
-                  <span className="font-mono text-[10px] tracking-widest text-primary uppercase">
-                    {d.code}
-                  </span>
+                <div className="font-mono text-[10px] text-muted-foreground mb-6 uppercase tracking-widest">
+                  DEPT 0{i + 1}
                 </div>
-                <h3 className="font-mono font-bold text-2xl tracking-tight mb-3 leading-tight">
-                  {d.name}
+                <h3 className="font-mono font-bold text-xl lg:text-2xl tracking-tight mb-4 group-hover:text-primary transition-colors">
+                  {dept.name}
                 </h3>
-                <p className="text-sm text-muted-foreground group-hover:text-background/70 line-clamp-3 leading-relaxed">
-                  {d.description}
+                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+                  {dept.description}
                 </p>
-                <div className="mt-8 font-mono text-[11px] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
-                  See physicians →
-                </div>
               </Link>
             ))}
           </div>
@@ -200,7 +192,7 @@ function Home() {
 
         {/* HOW IT WORKS */}
         <section className="pb-20 lg:pb-28">
-          <div className="text-kicker mb-3">03 — METHOD</div>
+          <div className="text-kicker mb-3">METHOD</div>
           <h2 className="font-mono font-bold text-4xl md:text-5xl tracking-tight leading-none mb-12">
             Three steps.<br />No paperwork.
           </h2>

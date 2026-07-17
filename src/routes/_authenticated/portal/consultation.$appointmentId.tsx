@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
+import { zodValidator, fallback } from "@tanstack/zod-adapter";
+import { z } from "zod";
 import { getAppointmentById } from "@/lib/portal.functions";
 import { PortalShell } from "@/components/portal-shell";
 import { toast } from "sonner";
@@ -11,7 +13,12 @@ const qo = (appointmentId: string) =>
     queryFn: () => getAppointmentById({ data: { appointmentId } }),
   });
 
+const searchSchema = z.object({
+  session: fallback(z.string(), "").default(""),
+});
+
 export const Route = createFileRoute("/_authenticated/portal/consultation/$appointmentId")({
+  validateSearch: zodValidator(searchSchema),
   loader: ({ context, params }) => context.queryClient.ensureQueryData(qo(params.appointmentId)),
   component: Consultation,
 });

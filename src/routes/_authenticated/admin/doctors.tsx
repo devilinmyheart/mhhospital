@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { adminListDoctors, adminLinkDoctorUser } from "@/lib/admin.functions";
+import { adminListDoctors, adminLinkDoctorUser, adminCreateDoctor, adminToggleDoctor, adminDeleteDoctor, adminListDepartments } from "@/lib/admin.functions";
 import { PortalShell } from "@/components/portal-shell";
 import { useState } from "react";
 import { toast } from "sonner";
 
 const qo = queryOptions({ queryKey: ["admin", "doctors"], queryFn: () => adminListDoctors() });
+const deptQO = queryOptions({ queryKey: ["admin", "departments"], queryFn: () => adminListDepartments() });
 
 export const Route = createFileRoute("/_authenticated/admin/doctors")({
   loader: ({ context }) => context.queryClient.ensureQueryData(qo),

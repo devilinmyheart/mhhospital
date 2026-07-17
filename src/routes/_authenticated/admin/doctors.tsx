@@ -97,11 +97,14 @@ function AdminDoctors() {
               </div>
               <div className="col-span-3 text-xs">{d.departments?.name}</div>
               <div className="col-span-2">
-                <span className={`text-[10px] font-mono px-2 py-1 rounded uppercase ${d.is_active ? "bg-success/10 text-success" : "bg-muted text-muted-foreground"}`}>
+                <button
+                  onClick={() => toggleMut.mutate({ doctorId: d.id, isActive: !d.is_active })}
+                  className={`text-[10px] font-mono px-2 py-1 rounded uppercase ${d.is_active ? "bg-success/10 text-success" : "bg-muted text-muted-foreground"}`}
+                >
                   {d.is_active ? "ACTIVE" : "INACTIVE"}
-                </span>
+                </button>
               </div>
-              <div className="col-span-3 text-right">
+              <div className="col-span-3 text-right space-x-2">
                 {d.user_id ? (
                   <span className="mono-label">LINKED</span>
                 ) : (
@@ -112,6 +115,12 @@ function AdminDoctors() {
                     LINK USER
                   </button>
                 )}
+                <button
+                  onClick={() => confirm(`Delete ${d.full_name}?`) && delMut.mutate(d.id)}
+                  className="text-[11px] font-semibold border border-destructive text-destructive px-3 py-1.5 rounded-sm hover:bg-destructive/10"
+                >
+                  DEL
+                </button>
               </div>
             </div>
             {linking === d.id && (

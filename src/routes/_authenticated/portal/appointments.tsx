@@ -26,9 +26,11 @@ export const Route = createFileRoute("/_authenticated/portal/appointments")({
 });
 
 const statusColors: Record<string, string> = {
+  pending: "bg-warning/10 text-warning border border-warning/30",
   booked: "bg-primary/10 text-primary",
   completed: "bg-success/10 text-success",
   cancelled: "bg-muted text-muted-foreground",
+  rejected: "bg-emergency/10 text-emergency",
   no_show: "bg-emergency/10 text-emergency",
 };
 

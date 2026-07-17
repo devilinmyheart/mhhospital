@@ -283,8 +283,10 @@ function Book() {
             </div>
 
             <div>
-              <label className="mono-label block mb-2">REASON (OPTIONAL)</label>
+              <label htmlFor="book-reason" className="mono-label block mb-2">REASON (OPTIONAL)</label>
               <textarea
+                id="book-reason"
+                name="reason"
                 value={reason}
                 onChange={(e) => setReason(e.target.value.slice(0, 500))}
                 rows={3}

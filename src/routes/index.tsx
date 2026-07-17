@@ -91,7 +91,7 @@ function Home() {
             </div>
             <h1 className="font-mono font-bold tracking-[-0.03em] leading-[0.92] text-[52px] sm:text-[72px] lg:text-[104px]">
               Care for your <br />
-              loved one,<br />
+              loved one<br />
               on your&nbsp;
               <span className="italic font-normal text-primary">schedule</span>
             </h1>

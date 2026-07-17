@@ -11,6 +11,37 @@ const docsQO = queryOptions({ queryKey: ["doctors"], queryFn: () => listDoctors(
 const reviewsQO = queryOptions({ queryKey: ["reviews", "approved"], queryFn: () => listApprovedReviews() });
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "MH Hospital — Advanced Medical Care & Online Consultation in Maharajganj" },
+      { name: "description", content: "MH Hospital in Sinduria, Maharajganj: book in-person visits, video consultations, and access medical records. 24/7 emergency care." },
+      { property: "og:title", content: "MH Hospital — Advanced Medical Care & Online Consultation" },
+      { property: "og:description", content: "Book in-person visits, launch video consultations, and access your medical records at MH Hospital." },
+      { property: "og:url", content: "https://mhhospital.lovable.app/" },
+      { property: "og:type", content: "website" },
+    ],
+    links: [{ rel: "canonical", href: "https://mhhospital.lovable.app/" }],
+    scripts: [{
+      type: "application/ld+json",
+      children: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Hospital",
+        name: "MH Hospital",
+        url: "https://mhhospital.lovable.app/",
+        telephone: "+91-7905932721",
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: "Sikarpur Road, Sinduria Chauraha (100m aage)",
+          addressLocality: "Maharajganj",
+          postalCode: "273303",
+          addressRegion: "Uttar Pradesh",
+          addressCountry: "IN",
+        },
+        medicalSpecialty: ["Cardiology", "Neurology", "Pediatrics", "General Medicine", "Emergency"],
+        openingHours: "Mo-Su 00:00-23:59",
+      }),
+    }],
+  }),
   loader: ({ context }) => {
     context.queryClient.ensureQueryData(deptQO);
     context.queryClient.ensureQueryData(docsQO);
@@ -18,6 +49,7 @@ export const Route = createFileRoute("/")({
   },
   component: Home,
 });
+
 
 const FALLBACK_REVIEWS = [
   { id: "f1", display_name: "Meera R.", relation: "Cardiology patient", rating: 5, quote: "The care at MH is precise and unhurried. The portal made following up after surgery feel easy — and human." },

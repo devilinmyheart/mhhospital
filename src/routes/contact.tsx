@@ -10,7 +10,30 @@ export const Route = createFileRoute("/contact")({
     meta: [
       { title: "Contact — MH Hospital" },
       { name: "description", content: "Contact MH Hospital: location, phone, hours, 24/7 emergency line, and a message form." },
+      { property: "og:title", content: "Contact MH Hospital" },
+      { property: "og:description", content: "Sikarpur Road, Sinduria, Maharajganj. Call +91 7905932721 or send a message." },
+      { property: "og:url", content: "https://mhhospital.lovable.app/contact" },
     ],
+    links: [{ rel: "canonical", href: "https://mhhospital.lovable.app/contact" }],
+    scripts: [{
+      type: "application/ld+json",
+      children: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Hospital",
+        name: "MH Hospital",
+        url: "https://mhhospital.lovable.app/contact",
+        telephone: "+91-7905932721",
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: "Sikarpur Road, Sinduria Chauraha (100m aage)",
+          addressLocality: "Maharajganj",
+          postalCode: "273303",
+          addressRegion: "Uttar Pradesh",
+          addressCountry: "IN",
+        },
+        openingHours: "Mo-Su 00:00-23:59",
+      }),
+    }],
   }),
   component: Contact,
 });

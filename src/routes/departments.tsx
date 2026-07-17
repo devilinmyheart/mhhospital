@@ -10,7 +10,11 @@ export const Route = createFileRoute("/departments")({
     meta: [
       { title: "Departments — MH Hospital" },
       { name: "description", content: "Browse specialized clinical departments at MH Hospital." },
+      { property: "og:title", content: "Departments — MH Hospital" },
+      { property: "og:description", content: "Cardiology, Neurology, Pediatrics, and more — explore our clinical departments." },
+      { property: "og:url", content: "https://mhhospital.lovable.app/departments" },
     ],
+    links: [{ rel: "canonical", href: "https://mhhospital.lovable.app/departments" }],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(qo),
   component: Departments,

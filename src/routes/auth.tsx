@@ -12,7 +12,12 @@ export const Route = createFileRoute("/auth")({
     meta: [
       { title: "Sign in — MH Hospital" },
       { name: "description", content: "Sign in or create an MH Hospital patient account." },
+      { property: "og:title", content: "Sign in — MH Hospital" },
+      { property: "og:description", content: "Access your MH Hospital patient portal." },
+      { property: "og:url", content: "https://mhhospital.lovable.app/auth" },
+      { name: "robots", content: "noindex" },
     ],
+    links: [{ rel: "canonical", href: "https://mhhospital.lovable.app/auth" }],
   }),
   validateSearch: searchSchema,
   component: Auth,

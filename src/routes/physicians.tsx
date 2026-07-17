@@ -14,7 +14,11 @@ export const Route = createFileRoute("/physicians")({
     meta: [
       { title: "Physicians — MH Hospital" },
       { name: "description", content: "Browse our physicians and book with a specialist that fits your needs." },
+      { property: "og:title", content: "Find a Doctor — MH Hospital" },
+      { property: "og:description", content: "Meet our specialists and book an appointment that fits your needs." },
+      { property: "og:url", content: "https://mhhospital.lovable.app/physicians" },
     ],
+    links: [{ rel: "canonical", href: "https://mhhospital.lovable.app/physicians" }],
   }),
   validateSearch: searchSchema,
   loader: ({ context }) => {

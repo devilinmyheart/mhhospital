@@ -22,7 +22,11 @@ export const Route = createFileRoute("/book")({
     meta: [
       { title: "Book an appointment — MH Hospital" },
       { name: "description", content: "Book an in-person visit or video consultation with an MH Hospital physician." },
+      { property: "og:title", content: "Book an appointment — MH Hospital" },
+      { property: "og:description", content: "Choose a department, doctor, and time — in person or by video." },
+      { property: "og:url", content: "https://mhhospital.lovable.app/book" },
     ],
+    links: [{ rel: "canonical", href: "https://mhhospital.lovable.app/book" }],
   }),
   validateSearch: searchSchema,
   loader: ({ context }) => {

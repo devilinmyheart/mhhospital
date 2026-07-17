@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TelehealthRouteImport } from './routes/telehealth'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PhysiciansRouteImport } from './routes/physicians'
 import { Route as DepartmentsRouteImport } from './routes/departments'
@@ -34,6 +35,11 @@ import { Route as AuthenticatedAdminAvailabilityRouteImport } from './routes/_au
 import { Route as AuthenticatedAdminAppointmentsRouteImport } from './routes/_authenticated/admin/appointments'
 import { Route as AuthenticatedPortalConsultationAppointmentIdRouteImport } from './routes/_authenticated/portal/consultation.$appointmentId'
 
+const TelehealthRoute = TelehealthRouteImport.update({
+  id: '/telehealth',
+  path: '/telehealth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -177,6 +183,7 @@ export interface FileRoutesByFullPath {
   '/departments': typeof DepartmentsRoute
   '/physicians': typeof PhysiciansRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/telehealth': typeof TelehealthRoute
   '/admin/appointments': typeof AuthenticatedAdminAppointmentsRoute
   '/admin/availability': typeof AuthenticatedAdminAvailabilityRoute
   '/admin/departments': typeof AuthenticatedAdminDepartmentsRoute
@@ -202,6 +209,7 @@ export interface FileRoutesByTo {
   '/departments': typeof DepartmentsRoute
   '/physicians': typeof PhysiciansRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/telehealth': typeof TelehealthRoute
   '/admin/appointments': typeof AuthenticatedAdminAppointmentsRoute
   '/admin/availability': typeof AuthenticatedAdminAvailabilityRoute
   '/admin/departments': typeof AuthenticatedAdminDepartmentsRoute
@@ -229,6 +237,7 @@ export interface FileRoutesById {
   '/departments': typeof DepartmentsRoute
   '/physicians': typeof PhysiciansRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/telehealth': typeof TelehealthRoute
   '/_authenticated/admin/appointments': typeof AuthenticatedAdminAppointmentsRoute
   '/_authenticated/admin/availability': typeof AuthenticatedAdminAvailabilityRoute
   '/_authenticated/admin/departments': typeof AuthenticatedAdminDepartmentsRoute
@@ -256,6 +265,7 @@ export interface FileRouteTypes {
     | '/departments'
     | '/physicians'
     | '/sitemap.xml'
+    | '/telehealth'
     | '/admin/appointments'
     | '/admin/availability'
     | '/admin/departments'
@@ -281,6 +291,7 @@ export interface FileRouteTypes {
     | '/departments'
     | '/physicians'
     | '/sitemap.xml'
+    | '/telehealth'
     | '/admin/appointments'
     | '/admin/availability'
     | '/admin/departments'
@@ -307,6 +318,7 @@ export interface FileRouteTypes {
     | '/departments'
     | '/physicians'
     | '/sitemap.xml'
+    | '/telehealth'
     | '/_authenticated/admin/appointments'
     | '/_authenticated/admin/availability'
     | '/_authenticated/admin/departments'
@@ -334,10 +346,18 @@ export interface RootRouteChildren {
   DepartmentsRoute: typeof DepartmentsRoute
   PhysiciansRoute: typeof PhysiciansRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TelehealthRoute: typeof TelehealthRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/telehealth': {
+      id: '/telehealth'
+      path: '/telehealth'
+      fullPath: '/telehealth'
+      preLoaderRoute: typeof TelehealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -559,6 +579,7 @@ const rootRouteChildren: RootRouteChildren = {
   DepartmentsRoute: DepartmentsRoute,
   PhysiciansRoute: PhysiciansRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TelehealthRoute: TelehealthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

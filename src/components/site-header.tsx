@@ -42,7 +42,7 @@ export function SiteHeader() {
       <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b border-border px-4 h-14 flex items-center justify-between">
         <div className="flex items-center gap-8">
           <Link to="/" className="font-bold tracking-tighter text-lg">
-            MH<span className="text-primary">HOSPITAL</span>
+            MH<span className="text-primary">&nbsp;HOSPITAL</span>
           </Link>
           <div className="hidden lg:flex gap-6 text-[13px] font-medium text-muted-foreground">
             <Link to="/departments" className="hover:text-foreground" activeProps={{ className: "text-foreground" }}>

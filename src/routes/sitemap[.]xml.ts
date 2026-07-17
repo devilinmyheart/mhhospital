@@ -51,4 +51,4 @@ export const Route = createFileRoute("/sitemap.xml")({
       },
     },
   },
-});
+} as Parameters<ReturnType<typeof createFileRoute<"/sitemap.xml">>>[0]);

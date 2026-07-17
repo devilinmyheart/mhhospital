@@ -173,7 +173,7 @@ export const bookAppointment = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => bookSchema.parse(d))
   .handler(async ({ context, data }) => {
-    const rule = await validateAndReserveSlot(context.supabase, data.doctorId, data.scheduledAt);
+    const rule = await validateAndReserveSlot(context.supabase, data.doctorId, data.scheduledAt, data.weekday, data.localTime);
     const { data: appt, error } = await context.supabase
       .from("appointments")
       .insert({

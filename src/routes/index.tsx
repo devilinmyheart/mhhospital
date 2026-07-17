@@ -93,7 +93,7 @@ function Home() {
               Care for your <br />
               loved one,<br />
               on your&nbsp;
-              <span className="italic font-normal text-primary">schedule.</span>
+              <span className="italic font-normal text-primary">schedule</span>
             </h1>
             <p className="mt-8 text-base lg:text-lg text-muted-foreground max-w-xl leading-relaxed">
               Book in-person visits, launch video consultations, and access your medical records — from a single patient portal built for Maharajganj.

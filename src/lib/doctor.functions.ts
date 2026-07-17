@@ -95,33 +95,42 @@ export const getMyAvailability = createServerFn({ method: "GET" })
     if (!doctorId) return [];
     const { data } = await context.supabase
       .from("doctor_availability")
-      .select("id, weekday, start_time, end_time")
+      .select("id, weekday, start_time, end_time, break_start, break_end, slot_duration_min, max_bookings_per_slot")
       .eq("doctor_id", doctorId)
       .order("weekday");
     return data ?? [];
   });
 
+const availabilitySlotSchema = z.object({
+  weekday: z.number().int().min(0).max(6),
+  start_time: z.string(),
+  end_time: z.string(),
+  break_start: z.string().nullable().optional(),
+  break_end: z.string().nullable().optional(),
+  slot_duration_min: z.number().int().min(5).max(240).default(30),
+  max_bookings_per_slot: z.number().int().min(1).max(20).default(1),
+});
+
 export const setMyAvailability = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
-    z
-      .object({
-        slots: z.array(
-          z.object({
-            weekday: z.number().int().min(0).max(6),
-            start_time: z.string(),
-            end_time: z.string(),
-          }),
-        ),
-      })
-      .parse(d),
+    z.object({ slots: z.array(availabilitySlotSchema) }).parse(d),
   )
   .handler(async ({ context, data }) => {
     const doctorId = await myDoctorId(context);
     if (!doctorId) throw new Error("Not a doctor");
     await context.supabase.from("doctor_availability").delete().eq("doctor_id", doctorId);
     if (data.slots.length) {
-      const rows = data.slots.map((s) => ({ ...s, doctor_id: doctorId }));
+      const rows = data.slots.map((s) => ({
+        doctor_id: doctorId,
+        weekday: s.weekday,
+        start_time: s.start_time,
+        end_time: s.end_time,
+        break_start: s.break_start || null,
+        break_end: s.break_end || null,
+        slot_duration_min: s.slot_duration_min,
+        max_bookings_per_slot: s.max_bookings_per_slot,
+      }));
       const { error } = await context.supabase.from("doctor_availability").insert(rows);
       if (error) throw new Error(error.message);
     }

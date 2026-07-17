@@ -1,6 +1,7 @@
 import { Link, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { getMyRoles } from "@/lib/portal.functions";
 import type { User } from "@supabase/supabase-js";
 
 export function EmergencyRibbon() {

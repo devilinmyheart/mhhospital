@@ -62,7 +62,8 @@ function Appts() {
 
       <div className="border border-border">
         {data.map((a: any) => {
-          const upcoming = a.status === "booked" && new Date(a.scheduled_at).getTime() > Date.now();
+          const active = a.status === "booked" || a.status === "pending";
+          const upcoming = active && new Date(a.scheduled_at).getTime() > Date.now();
           return (
             <div key={a.id} className="border-b border-border last:border-b-0 bg-card p-4 grid grid-cols-12 gap-2 items-center">
               <div className="col-span-3 font-mono text-xs">{new Date(a.scheduled_at).toLocaleString()}</div>
@@ -74,12 +75,12 @@ function Appts() {
               <div className="col-span-1 mono-label">{a.mode === "video" ? "VIDEO" : "IN-PERSON"}</div>
               <div className="col-span-2">
                 <span className={`text-[10px] font-mono px-2 py-1 rounded uppercase ${statusColors[a.status] ?? "bg-muted"}`}>
-                  {a.status}
+                  {a.status === "pending" ? "AWAITING APPROVAL" : a.status}
                 </span>
               </div>
               <div className="col-span-1 text-right text-[11px] text-muted-foreground">{a.duration_min}min</div>
 
-              {(upcoming || (a.mode === "video" && a.status === "booked")) && (
+              {upcoming && (
                 <div className="col-span-12 pt-2 flex flex-wrap justify-end gap-2">
                   {a.mode === "video" && a.status === "booked" && (
                     <>
@@ -105,22 +106,18 @@ function Appts() {
                       </button>
                     </>
                   )}
-                  {upcoming && (
-                    <>
-                      <button
-                        onClick={() => setRescheduleTarget(a)}
-                        className="border border-border px-3 py-1.5 text-[11px] font-mono uppercase hover:bg-accent"
-                      >
-                        Reschedule
-                      </button>
-                      <button
-                        onClick={() => setCancelTarget(a)}
-                        className="border border-emergency/40 text-emergency px-3 py-1.5 text-[11px] font-mono uppercase hover:bg-emergency/10"
-                      >
-                        Cancel
-                      </button>
-                    </>
-                  )}
+                  <button
+                    onClick={() => setRescheduleTarget(a)}
+                    className="border border-border px-3 py-1.5 text-[11px] font-mono uppercase hover:bg-accent"
+                  >
+                    Reschedule
+                  </button>
+                  <button
+                    onClick={() => setCancelTarget(a)}
+                    className="border border-emergency/40 text-emergency px-3 py-1.5 text-[11px] font-mono uppercase hover:bg-emergency/10"
+                  >
+                    Cancel
+                  </button>
                 </div>
               )}
             </div>

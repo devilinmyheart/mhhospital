@@ -1,0 +1,1 @@
+UPDATE public.doctors SET full_name = 'Dr. Khurshid Alam' WHERE full_name = 'Dr. Julian Reyes';

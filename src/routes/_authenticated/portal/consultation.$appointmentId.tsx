@@ -107,7 +107,7 @@ function Consultation() {
             {!joined && (
               <div className="absolute inset-0 grid place-items-center text-center p-6">
                 <div>
-                  <div className="mono-label text-muted-foreground mb-3">ROOM_ID · {appointmentId.slice(0, 8).toUpperCase()}</div>
+                  <div className="mono-label text-muted-foreground mb-3">ROOM_ID · {String(roomId).slice(0, 8).toUpperCase()}</div>
                   <p className="text-sm text-muted-foreground max-w-sm mx-auto">
                     {isVideo
                       ? canJoin

@@ -99,7 +99,7 @@ export const adminAllAppointments = createServerFn({ method: "GET" })
     await assertAdmin(context);
     const { data } = await context.supabase
       .from("appointments")
-      .select("id, scheduled_at, mode, status, reason, doctors(full_name), departments(name), profiles!appointments_patient_id_fkey(full_name)")
+      .select("id, scheduled_at, mode, status, reason, doctors(full_name), departments(name)")
       .order("scheduled_at", { ascending: false })
       .limit(200);
     return data ?? [];

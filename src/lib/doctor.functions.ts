@@ -17,7 +17,7 @@ export const getDoctorDashboard = createServerFn({ method: "GET" })
     const [{ data: today }, { data: upcoming }] = await Promise.all([
       context.supabase
         .from("appointments")
-        .select("id, scheduled_at, mode, status, reason, profiles!appointments_patient_id_fkey(full_name)")
+        .select("id, scheduled_at, mode, status, reason")
         .eq("doctor_id", doctorId)
         .gte("scheduled_at", startOfDay.toISOString())
         .lte("scheduled_at", endOfDay.toISOString())

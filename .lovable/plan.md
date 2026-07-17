@@ -1,59 +1,33 @@
-## Redesign direction
 
-- **Palette**: Cloud White base (`#fafbfc` / `#e8ecf1`), deep navy ink (`#0c2340`), coral accent (`#ff6b6b`) reserved for emergency + primary CTAs.
-- **Type**: JetBrains Mono for headings, labels, and numeric data (keeps the operational-dashboard DNA). Work Sans for body/long-form.
-- **Layout**: Magazine — a large featured hero with editorial typography, followed by a structured grid of departments, physicians, stats, and stories.
-- **Visual richness: 3/5** — refined, not cinematic. Light textures, one hero image, tasteful motion.
+## The problem
 
-## Homepage (`src/routes/index.tsx`) rebuild
+After sign-in, `src/routes/auth.tsx` always navigates to `/portal` — regardless of the user's role. The admin routes at `/admin/*` exist and are functional, but nothing sends the admin user there. That's why logging in as `admin@mhhospital.com` lands on the Patient Portal.
 
-Sections, top to bottom:
+There is no role-aware landing logic, and the site header doesn't surface an "Admin" link either, so admins have no visible entry point.
 
-1. **Editorial hero (featured story style)**
-   - Left column: kicker label ("ISSUE 01 · CARE DIVISION"), oversized mixed serif-feel heading using JetBrains Mono weight play ("Care, on your schedule."), lead paragraph, primary coral CTA "Book appointment" + ghost "Meet the physicians".
-   - Right column: generated hero image (calm clinical portrait), floating stat card overlay ("24/7 ER · 7905932721") and a mono-label caption strip.
-2. **Ticker strip**: horizontal marquee of departments / ER number / "Now accepting video visits" in mono caps on a light band.
-3. **Departments grid (magazine cards)**: 6 department tiles, numbered `01–06`, hover reveals coral underline + arrow. Mono numerals, Work Sans description.
-4. **Featured physicians**: asymmetric grid — one large "Editor's pick" card (Dr. Khurshid Alam) + 3 smaller cards. Each with generated portrait, specialty tag, "Book" link.
-5. **How it works** (3-step editorial): "Choose · Confirm · Consult" with mono step numbers and thin dividers.
-6. **Stats band**: 4 numeric stats (patients, physicians, specialties, avg. wait) in giant mono figures on the light-gray band.
-7. **Pull-quote / patient story**: single large blockquote with coral quote mark.
-8. **CTA footer band**: "Need urgent care? Call +91 7905932721" with coral background.
+## The fix
 
-Motion: subtle `fade-in`/`slide-in` on scroll (using existing tailwind animations), hover lift on cards, marquee ticker. No heavy parallax.
+**1. Add a `getMyRoles()` server function** (or reuse the existing one in `src/lib/portal.functions.ts`) that returns the roles for the current user from `user_roles`.
 
-## Design tokens (`src/styles.css`)
+**2. Role-aware post-login redirect in `src/routes/auth.tsx`:**
+After a successful sign-in / signup / already-signed-in check, fetch the user's roles and route to:
+- `/admin` if roles include `admin`
+- `/doctor` if roles include `doctor`
+- `/portal` otherwise (patient)
 
-- Update semantic tokens: `--background` `#fafbfc`, `--foreground` `#0c2340`, `--muted` `#e8ecf1`, `--primary` coral `#ff6b6b` with navy `--primary-foreground`, `--accent` navy, `--border` soft gray.
-- Add `--gradient-editorial` (subtle navy→transparent), `--shadow-editorial` (soft, low), `--color-coral`, `--color-ink`.
-- Keep JetBrains Mono / Work Sans font tokens (already loaded in root head).
-- Add a `.text-kicker` utility (mono, uppercase, tracked) and `.editorial-rule` (thin navy divider) via `@utility`.
+The `?next=` search param, when present, still takes precedence (so deep-links keep working).
 
-## Shared components
+**3. Add a role-based nav badge in `src/components/site-header.tsx`:**
+When signed in, show a "Portal" link that points to the user's correct landing route (Admin / Doctor / Patient) based on role, so the admin has a one-click way in from anywhere.
 
-- **`SiteHeader`**: lighten background to Cloud White, ink text, coral ER pill, mono nav labels, thin bottom rule. Keep address/ER content unchanged.
-- **`EmergencyRibbon`**: slimmer, coral left border on white instead of solid red block; mono uppercase text.
-- **`SiteFooter`**: three-column editorial footer with mono column titles and a large wordmark.
-- **New**: `components/marquee-ticker.tsx`, `components/editorial-card.tsx`, `components/stat-figure.tsx`, `components/section-heading.tsx` (kicker + big title + rule).
+**4. Guard the wrong-portal case gracefully:**
+`/_authenticated/admin/*` routes already check `assertAdmin()` via `admin.functions.ts`. Add a small `beforeLoad` (or loader redirect) on `/portal` and `/admin` so if an admin lands on `/portal` directly, they're bounced to `/admin`, and non-admins hitting `/admin` are bounced to `/portal`. This prevents future confusion.
 
-## Other public routes (light polish, no logic changes)
+## Files touched
 
-- `physicians.tsx`, `book.tsx`, `contact.tsx`, `departments/*` inherit new tokens automatically; add `SectionHeading` at top of each and swap card chrome to the editorial style. No behavior/schema changes.
+- `src/routes/auth.tsx` — role-aware redirect after auth
+- `src/components/site-header.tsx` — dynamic "Portal" link based on role
+- `src/routes/_authenticated/portal/index.tsx` + `src/routes/_authenticated/admin/index.tsx` — optional loader-side role redirect
+- `src/lib/portal.functions.ts` — ensure `getMyRoles()` is exported (already exists)
 
-## Assets
-
-- Generate 2 images with `imagegen`:
-  1. `src/assets/hero-clinic.jpg` — bright, airy clinical corridor / clinician portrait, cloud white + navy palette.
-  2. `src/assets/editorial-story.jpg` — patient-and-doctor moment for the pull-quote section.
-- Physician portraits: reuse existing avatars; if missing, use a soft mono initial tile.
-
-## Out of scope
-
-- No changes to auth, portals, RLS, server functions, database, or booking logic.
-- No new dependencies.
-- Email/notifications untouched.
-
-## Verification
-
-- `bun run build` clean.
-- Visit `/` in preview, screenshot at 1280×1800 to confirm hero, grid, stats, and CTA bands render as intended and coral is only on CTAs + ER.
+No database or RLS changes are required — the `admin` role is already assigned to your account and the admin pages already work; this is purely a routing/UX fix.

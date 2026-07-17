@@ -2,8 +2,18 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
+import { getMyRoles } from "@/lib/portal.functions";
 import { toast } from "sonner";
 import { z } from "zod";
+
+async function landingForCurrentUser(): Promise<string> {
+  try {
+    const roles = await getMyRoles();
+    if (roles.includes("admin")) return "/admin";
+    if (roles.includes("doctor")) return "/doctor";
+  } catch {}
+  return "/portal";
+}
 
 const searchSchema = z.object({ next: z.string().optional() });
 
@@ -33,8 +43,11 @@ function Auth() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user) navigate({ to: (next as any) || "/portal", replace: true });
+    supabase.auth.getUser().then(async ({ data }) => {
+      if (data.user) {
+        const dest = (next as any) || (await landingForCurrentUser());
+        navigate({ to: dest, replace: true });
+      }
     });
   }, [navigate, next]);
 
@@ -57,7 +70,8 @@ function Auth() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       }
-      navigate({ to: (next as any) || "/portal", replace: true });
+      const dest = (next as any) || (await landingForCurrentUser());
+      navigate({ to: dest, replace: true });
     } catch (e: any) {
       toast.error(e.message ?? "Auth failed");
     } finally {

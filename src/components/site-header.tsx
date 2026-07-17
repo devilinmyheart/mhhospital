@@ -1,6 +1,7 @@
 import { Link, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { getMyRoles } from "@/lib/portal.functions";
 import type { User } from "@supabase/supabase-js";
 
 export function EmergencyRibbon() {
@@ -24,12 +25,23 @@ export function EmergencyRibbon() {
 
 export function SiteHeader() {
   const [user, setUser] = useState<User | null>(null);
+  const [portalTo, setPortalTo] = useState<string>("/portal");
   const router = useRouter();
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    async function refresh(u: User | null) {
+      setUser(u);
+      if (!u) { setPortalTo("/portal"); return; }
+      try {
+        const roles = await getMyRoles();
+        if (roles.includes("admin")) setPortalTo("/admin");
+        else if (roles.includes("doctor")) setPortalTo("/doctor");
+        else setPortalTo("/portal");
+      } catch { setPortalTo("/portal"); }
+    }
+    supabase.auth.getUser().then(({ data }) => refresh(data.user));
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      setUser(session?.user ?? null);
+      refresh(session?.user ?? null);
     });
     return () => sub.subscription.unsubscribe();
   }, []);
@@ -71,10 +83,10 @@ export function SiteHeader() {
             {user ? (
               <>
                 <Link
-                  to="/portal"
+                  to={portalTo as any}
                   className="text-[11px] font-mono tracking-widest uppercase border border-border px-3 py-2 hover:border-foreground transition-colors"
                 >
-                  Portal
+                  {portalTo === "/admin" ? "Admin" : portalTo === "/doctor" ? "Doctor" : "Portal"}
                 </Link>
                 <button
                   onClick={signOut}

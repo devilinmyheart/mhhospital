@@ -1,11 +1,20 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
-import { getMyDashboard } from "@/lib/portal.functions";
+import { getMyDashboard, getMyRoles } from "@/lib/portal.functions";
 import { PortalShell } from "@/components/portal-shell";
 
 const qo = queryOptions({ queryKey: ["portal", "dashboard"], queryFn: () => getMyDashboard() });
 
 export const Route = createFileRoute("/_authenticated/portal/")({
+  beforeLoad: async () => {
+    try {
+      const roles = await getMyRoles();
+      if (roles.includes("admin")) throw redirect({ to: "/admin" });
+      if (roles.includes("doctor")) throw redirect({ to: "/doctor" });
+    } catch (e: any) {
+      if (e?.isRedirect) throw e;
+    }
+  },
   loader: ({ context }) => context.queryClient.ensureQueryData(qo),
   component: Overview,
 });

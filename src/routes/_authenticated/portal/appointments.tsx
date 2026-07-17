@@ -80,13 +80,28 @@ function Appts() {
               {(upcoming || (a.mode === "video" && a.status === "booked")) && (
                 <div className="col-span-12 pt-2 flex flex-wrap justify-end gap-2">
                   {a.mode === "video" && a.status === "booked" && (
-                    <Link
-                      to="/portal/consultation/$appointmentId"
-                      params={{ appointmentId: a.id }}
-                      className="bg-primary text-primary-foreground px-3 py-1.5 text-[11px] font-mono uppercase hover:opacity-90"
-                    >
-                      Join video visit →
-                    </Link>
+                    <>
+                      <Link
+                        to="/portal/consultation/$appointmentId"
+                        params={{ appointmentId: a.id }}
+                        search={{ session: a.session_token }}
+                        className="bg-primary text-primary-foreground px-3 py-1.5 text-[11px] font-mono uppercase hover:opacity-90"
+                      >
+                        Join video visit →
+                      </Link>
+                      <button
+                        onClick={() => {
+                          const url = `${window.location.origin}/portal/consultation/${a.id}?session=${a.session_token}`;
+                          navigator.clipboard.writeText(url).then(
+                            () => toast.success("Session link copied"),
+                            () => toast.error("Unable to copy link"),
+                          );
+                        }}
+                        className="border border-border px-3 py-1.5 text-[11px] font-mono uppercase hover:bg-accent"
+                      >
+                        Copy session link
+                      </button>
+                    </>
                   )}
                   {upcoming && (
                     <>

@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
+import { zodValidator, fallback } from "@tanstack/zod-adapter";
+import { z } from "zod";
 import { getAppointmentById } from "@/lib/portal.functions";
 import { PortalShell } from "@/components/portal-shell";
 import { toast } from "sonner";
@@ -11,14 +13,25 @@ const qo = (appointmentId: string) =>
     queryFn: () => getAppointmentById({ data: { appointmentId } }),
   });
 
+const searchSchema = z.object({
+  session: fallback(z.string(), "").default(""),
+});
+
 export const Route = createFileRoute("/_authenticated/portal/consultation/$appointmentId")({
+  validateSearch: zodValidator(searchSchema),
   loader: ({ context, params }) => context.queryClient.ensureQueryData(qo(params.appointmentId)),
   component: Consultation,
 });
 
 function Consultation() {
   const { appointmentId } = Route.useParams();
+  const { session: sessionParam } = Route.useSearch();
   const { data: appt } = useSuspenseQuery(qo(appointmentId));
+  const roomId = (appt as any).session_token ?? appointmentId;
+  const sessionMismatch = sessionParam !== "" && sessionParam !== roomId;
+  const joinUrl = typeof window !== "undefined"
+    ? `${window.location.origin}/portal/consultation/${appointmentId}?session=${roomId}`
+    : "";
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const [joined, setJoined] = useState(false);
@@ -94,7 +107,7 @@ function Consultation() {
             {!joined && (
               <div className="absolute inset-0 grid place-items-center text-center p-6">
                 <div>
-                  <div className="mono-label text-muted-foreground mb-3">ROOM_ID · {appointmentId.slice(0, 8).toUpperCase()}</div>
+                  <div className="mono-label text-muted-foreground mb-3">ROOM_ID · {String(roomId).slice(0, 8).toUpperCase()}</div>
                   <p className="text-sm text-muted-foreground max-w-sm mx-auto">
                     {isVideo
                       ? canJoin
@@ -159,6 +172,26 @@ function Consultation() {
             <div>
               <div className="mono-label mb-1">REASON</div>
               <p className="text-xs text-muted-foreground">{appt.reason}</p>
+            </div>
+          )}
+          {isVideo && (
+            <div>
+              <div className="mono-label mb-1">SESSION LINK</div>
+              {sessionMismatch && (
+                <div className="text-[11px] text-emergency mb-1">Link token doesn't match — verify with your provider.</div>
+              )}
+              <div className="font-mono text-[10px] break-all bg-muted p-2 border border-border">{joinUrl}</div>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(joinUrl).then(
+                    () => toast.success("Session link copied"),
+                    () => toast.error("Unable to copy link"),
+                  );
+                }}
+                className="mt-2 w-full border border-border px-3 py-1.5 text-[11px] font-mono uppercase hover:bg-accent"
+              >
+                Copy join link
+              </button>
             </div>
           )}
           <Link to="/portal/appointments" className="block text-xs mono-label text-primary hover:underline">

@@ -114,7 +114,7 @@ export function SiteFooter() {
           </div>
         </div>
         <div>
-          <h4 className="text-[10px] font-mono font-bold uppercase mb-4 tracking-widest">Locations</h4>
+          <h4 className="text-[10px] font-mono font-bold uppercase mb-4 tracking-widest">LOCATION</h4>
           <ul className="text-xs space-y-2 text-muted-foreground">
             <li>Sikarpur Road, Sinduria chauraha s 100m aage</li>
             <li>District Maharajganj 273303</li>

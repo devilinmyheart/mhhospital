@@ -242,10 +242,10 @@ function Home() {
         <div className="max-w-7xl mx-auto px-4 lg:px-8 py-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
-              { n: "14K+", l: "Patients treated" },
+              { n: "140K+", l: "Patients treated" },
               { n: "24", l: "Consultant physicians" },
               { n: "08", l: "Clinical specialties" },
-              { n: "12m", l: "Avg. ER wait time" },
+              { n: "14m", l: "Avg. ER wait time" },
             ].map((s) => (
               <div key={s.l}>
                 <div className="font-mono font-bold text-5xl md:text-6xl tracking-tighter text-foreground leading-none">

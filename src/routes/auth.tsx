@@ -56,7 +56,7 @@ function Auth() {
     setLoading(true);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -65,6 +65,11 @@ function Auth() {
           },
         });
         if (error) throw error;
+        if (!data.session) {
+          // Auto-confirm off — try password sign-in immediately.
+          const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
+          if (signInErr) throw signInErr;
+        }
         toast.success("Account created — you're signed in.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -73,7 +78,14 @@ function Auth() {
       const dest = (next as any) || (await landingForCurrentUser());
       navigate({ to: dest, replace: true });
     } catch (e: any) {
-      toast.error(e.message ?? "Auth failed");
+      const msg = String(e?.message ?? "Auth failed");
+      if (/email.*not.*confirmed/i.test(msg)) {
+        toast.error("Your email isn't confirmed yet. Please contact support — this shouldn't happen anymore.");
+      } else if (/invalid login credentials/i.test(msg)) {
+        toast.error("Incorrect email or password.");
+      } else {
+        toast.error(msg);
+      }
     } finally {
       setLoading(false);
     }

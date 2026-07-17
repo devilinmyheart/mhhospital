@@ -1,22 +1,18 @@
-## Truly fix hero headline overflow
+## The problem
 
-The stacked layout helped, but at ~995px the italic word "schedule" alone still overruns the viewport because the h1 uses `lg:text-[84px]` — a single 84px monospace word is ~640px wide and the "e" wraps to its own line, which looks broken.
+Your app has no "approval" logic. What patients are actually hitting is Supabase's **email confirmation** requirement — the auth logs show a fresh signup followed by a `400: Email not confirmed` on the very next login attempt. The generic error is being read as "needs approval."
 
-### Root cause
-The font sizes are hardcoded pixel values that don't scale with viewport width. On a narrow laptop the `lg:` breakpoint fires but the container is still only ~960px wide.
+## The fix
 
-### Fix (single file: `src/routes/index.tsx`)
+Turn on **auto-confirm** for email signups so accounts are usable the moment they're created — no verification email, no waiting.
 
-1. **Replace fixed h1 sizes with a fluid `clamp()`** so the headline always fits its column:
-   ```
-   style={{ fontSize: "clamp(2.25rem, 8.5vw, 6.5rem)" }}
-   ```
-   Remove the `text-[..]` classes for the h1. This scales smoothly from ~36px on phones to 104px on wide desktops with no dead zone in the middle.
+1. Call `configure_auth` with `auto_confirm_email: true` (leaves your other auth settings alone).
+2. Improve the signup UX in `src/routes/auth.tsx` so the success toast says "Account created — you're signed in" only after we confirm a session exists, and surface a clearer message if login ever returns `email_not_confirmed` in the future.
 
-2. **Prevent single-word overflow** by adding `[word-break:break-word] hyphens-none` and `max-w-full` on the h1, so even if a word is very wide it wraps cleanly inside the column instead of bleeding past.
+## Notes
 
-3. **Tighten the italic word specifically** — wrap "schedule" in a span with `inline-block max-w-full` and a slightly smaller relative size (`text-[0.9em]`) so the italic (which is optically wider than the roman) never becomes the widest element.
+- No database/schema changes.
+- Existing unconfirmed users (like `devilkillermylove@gmail.com` in the logs) will also be able to log in after this flips on.
+- Trade-off: anyone can register with any email string (including typos/fakes). That's the accepted cost of instant access — matches what you picked.
 
-4. **Remove the forced side-by-side split at `xl`** and keep the image column stacked below the text until `xl` — no change from last turn, already correct.
-
-No copy changes, no color/layout changes elsewhere.
+Ready to switch to build mode and apply this?

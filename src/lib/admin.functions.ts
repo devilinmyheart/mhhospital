@@ -296,3 +296,115 @@ export const adminSetDoctorAvailability = createServerFn({ method: "POST" })
     }
     return { ok: true };
   });
+
+/* ============ HOSPITALS ============ */
+const hospitalSchema = z.object({
+  name: z.string().trim().min(1).max(160),
+  slug: z.string().trim().min(1).max(80).regex(/^[a-z0-9-]+$/, "lowercase, digits, hyphens").optional().or(z.literal("")),
+  address: z.string().trim().max(300).optional().or(z.literal("")),
+  city: z.string().trim().max(80).optional().or(z.literal("")),
+  state: z.string().trim().max(80).optional().or(z.literal("")),
+  postal_code: z.string().trim().max(20).optional().or(z.literal("")),
+  phone: z.string().trim().max(40).optional().or(z.literal("")),
+  email: z.string().trim().email().optional().or(z.literal("")),
+  emergency_phone: z.string().trim().max(40).optional().or(z.literal("")),
+  image_url: z.string().trim().url().optional().or(z.literal("")),
+  description: z.string().trim().max(2000).optional().or(z.literal("")),
+  is_active: z.boolean().optional(),
+});
+
+export const adminListHospitals = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const { data } = await context.supabase.from("hospitals").select("*").order("name");
+    return data ?? [];
+  });
+
+export const adminUpsertHospital = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid().optional() }).and(hospitalSchema).parse(d))
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context);
+    const { id, ...raw } = data as any;
+    const payload: Record<string, any> = {};
+    for (const [k, v] of Object.entries(raw)) payload[k] = v === "" ? null : v;
+    if (id) {
+      const { error } = await context.supabase.from("hospitals").update(payload).eq("id", id);
+      if (error) throw new Error(error.message);
+    } else {
+      const { error } = await context.supabase.from("hospitals").insert(payload);
+      if (error) throw new Error(error.message);
+    }
+    return { ok: true };
+  });
+
+export const adminDeleteHospital = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context);
+    const { error } = await context.supabase.from("hospitals").delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+/* ============ USERS + ROLES ============ */
+export const adminListUsers = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: usersPage, error } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1000 });
+    if (error) throw new Error(error.message);
+    const ids = usersPage.users.map((u) => u.id);
+    const [{ data: profiles }, { data: roles }] = await Promise.all([
+      supabaseAdmin.from("profiles").select("id, full_name").in("id", ids),
+      supabaseAdmin.from("user_roles").select("user_id, role").in("user_id", ids),
+    ]);
+    const profileMap = new Map((profiles ?? []).map((p: any) => [p.id, p.full_name]));
+    const roleMap = new Map<string, string[]>();
+    for (const r of roles ?? []) {
+      const arr = roleMap.get((r as any).user_id) ?? [];
+      arr.push((r as any).role);
+      roleMap.set((r as any).user_id, arr);
+    }
+    return usersPage.users.map((u) => ({
+      id: u.id,
+      email: u.email ?? "",
+      full_name: profileMap.get(u.id) ?? "",
+      created_at: u.created_at,
+      roles: roleMap.get(u.id) ?? [],
+    }));
+  });
+
+export const adminAssignRole = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ userId: z.string().uuid(), role: z.enum(["admin", "doctor", "patient"]) }).parse(d))
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context);
+    const { error } = await context.supabase
+      .from("user_roles")
+      .upsert({ user_id: data.userId, role: data.role }, { onConflict: "user_id,role" });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const adminRemoveRole = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ userId: z.string().uuid(), role: z.enum(["admin", "doctor", "patient"]) }).parse(d))
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context);
+    // Prevent removing the last admin
+    if (data.role === "admin") {
+      const { data: admins } = await context.supabase.from("user_roles").select("user_id").eq("role", "admin");
+      if ((admins ?? []).length <= 1) throw new Error("Cannot remove the last admin.");
+    }
+    const { error } = await context.supabase
+      .from("user_roles")
+      .delete()
+      .eq("user_id", data.userId)
+      .eq("role", data.role);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });

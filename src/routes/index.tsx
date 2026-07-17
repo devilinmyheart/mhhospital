@@ -1,27 +1,39 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
-import { listDepartments, listDoctors } from "@/lib/public.functions";
+import { listDepartments, listDoctors, listApprovedReviews } from "@/lib/public.functions";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
+import { ReviewForm } from "@/components/review-form";
 import heroClinic from "@/assets/hero-clinic.jpg";
 
 
 const deptQO = queryOptions({ queryKey: ["departments"], queryFn: () => listDepartments() });
 const docsQO = queryOptions({ queryKey: ["doctors"], queryFn: () => listDoctors({ data: {} }) });
+const reviewsQO = queryOptions({ queryKey: ["reviews", "approved"], queryFn: () => listApprovedReviews() });
 
 export const Route = createFileRoute("/")({
   loader: ({ context }) => {
     context.queryClient.ensureQueryData(deptQO);
     context.queryClient.ensureQueryData(docsQO);
+    context.queryClient.ensureQueryData(reviewsQO);
   },
   component: Home,
 });
 
+const FALLBACK_REVIEWS = [
+  { id: "f1", display_name: "Meera R.", relation: "Cardiology patient", rating: 5, quote: "The care at MH is precise and unhurried. The portal made following up after surgery feel easy — and human." },
+  { id: "f2", display_name: "Arjun S.", relation: "General medicine", rating: 5, quote: "Booked a video consultation at 10pm — saw the doctor the next morning. Prescription reached my pharmacy before I did." },
+  { id: "f3", display_name: "Priya K.", relation: "Family of ER patient", rating: 5, quote: "The ER team was calm and quick when we brought my father in at 2am. We felt looked after every step of the way." },
+];
+
 function Home() {
   const { data: departments } = useSuspenseQuery(deptQO);
   const { data: doctors } = useSuspenseQuery(docsQO);
+  const { data: reviewsData } = useSuspenseQuery(reviewsQO);
+  const reviews = reviewsData.length > 0 ? reviewsData : FALLBACK_REVIEWS;
   const featuredDoctors = doctors.slice(0, 4);
   const editorPick = featuredDoctors[0];
   const supporting = featuredDoctors.slice(1, 4);
+
 
   const tickerItems = [
     "Now booking video consultations",
@@ -213,35 +225,23 @@ function Home() {
         </div>
         <div className="editorial-rule mb-10" />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border">
-          {[
-            {
-              q: "The care at MH is precise and unhurried. The portal made following up after surgery feel easy — and human.",
-              n: "Meera R.",
-              d: "Cardiology patient",
-            },
-            {
-              q: "Booked a video consultation at 10pm — saw the doctor the next morning. Prescription reached my pharmacy before I did.",
-              n: "Arjun S.",
-              d: "General medicine",
-            },
-            {
-              q: "The ER team was calm and quick when we brought my father in at 2am. We felt looked after every step of the way.",
-              n: "Priya K.",
-              d: "Family of ER patient",
-            },
-          ].map((r) => (
-            <figure key={r.n} className="bg-background p-8 lg:p-10 flex flex-col">
-              <div className="font-mono text-primary text-6xl leading-none mb-4">"</div>
+          {reviews.map((r) => (
+            <figure key={r.id} className="bg-background p-8 lg:p-10 flex flex-col">
+              <div className="font-mono text-primary text-6xl leading-none mb-2">"</div>
+              <div className="mb-4 text-primary font-mono text-sm tracking-widest" aria-label={`${r.rating} out of 5 stars`}>
+                {"★".repeat(r.rating)}<span className="text-muted-foreground/40">{"★".repeat(5 - r.rating)}</span>
+              </div>
               <blockquote className="font-mono text-lg lg:text-xl tracking-tight leading-snug text-foreground flex-1">
-                {r.q}
+                {r.quote}
               </blockquote>
               <figcaption className="mt-8 pt-6 border-t border-border">
-                <div className="font-mono font-bold text-sm">{r.n}</div>
-                <div className="text-kicker !text-muted-foreground mt-1">{r.d}</div>
+                <div className="font-mono font-bold text-sm">{r.display_name}</div>
+                {r.relation && <div className="text-kicker !text-muted-foreground mt-1">{r.relation}</div>}
               </figcaption>
             </figure>
           ))}
         </div>
+        <ReviewForm />
       </section>
 
 

@@ -76,3 +76,16 @@ export const getDoctorAvailability = createServerFn({ method: "GET" })
     ]);
     return { slots: slots ?? [], booked: booked ?? [] };
   });
+
+export const listApprovedReviews = createServerFn({ method: "GET" }).handler(async () => {
+  const sb = serverPublic();
+  const { data, error } = await sb
+    .from("reviews")
+    .select("id, display_name, relation, rating, quote, created_at")
+    .eq("approved", true)
+    .order("created_at", { ascending: false })
+    .limit(12);
+  if (error) throw new Error(error.message);
+  return data ?? [];
+});
+

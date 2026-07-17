@@ -211,7 +211,7 @@ export const rescheduleAppointment = createServerFn({ method: "POST" })
       .maybeSingle();
     if (fetchErr) throw new Error(fetchErr.message);
     if (!appt) throw new Error("Appointment not found");
-    if (appt.status !== "booked") throw new Error("Only booked appointments can be rescheduled.");
+    if (appt.status !== "booked" && appt.status !== "pending") throw new Error("Only active appointments can be rescheduled.");
     if (new Date(appt.scheduled_at).getTime() - Date.now() < 60 * 60 * 1000) {
       throw new Error("Appointments can be rescheduled up to 1 hour before start.");
     }

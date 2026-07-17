@@ -195,7 +195,12 @@ export const bookAppointment = createServerFn({ method: "POST" })
 export const rescheduleAppointment = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
-    z.object({ appointmentId: z.string().uuid(), scheduledAt: z.string() }).parse(d),
+    z.object({
+      appointmentId: z.string().uuid(),
+      scheduledAt: z.string(),
+      weekday: z.number().int().min(0).max(6),
+      localTime: z.string().regex(/^\d{2}:\d{2}$/),
+    }).parse(d),
   )
   .handler(async ({ context, data }) => {
     const { data: appt, error: fetchErr } = await context.supabase
@@ -211,7 +216,7 @@ export const rescheduleAppointment = createServerFn({ method: "POST" })
       throw new Error("Appointments can be rescheduled up to 1 hour before start.");
     }
 
-    const rule = await validateAndReserveSlot(context.supabase, appt.doctor_id, data.scheduledAt, {
+    const rule = await validateAndReserveSlot(context.supabase, appt.doctor_id, data.scheduledAt, data.weekday, data.localTime, {
       excludeAppointmentId: appt.id,
     });
 

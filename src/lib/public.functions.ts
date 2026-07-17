@@ -72,7 +72,7 @@ export const getDoctorAvailability = createServerFn({ method: "GET" })
         .from("doctor_availability")
         .select("weekday, start_time, end_time, break_start, break_end, slot_duration_min, max_bookings_per_slot")
         .eq("doctor_id", data.doctorId),
-      supabaseAdmin.from("appointments").select("scheduled_at, duration_min").eq("doctor_id", data.doctorId).eq("status", "booked"),
+      supabaseAdmin.from("appointments").select("scheduled_at, duration_min").eq("doctor_id", data.doctorId).in("status", ["pending", "booked"]),
     ]);
     return { slots: slots ?? [], booked: booked ?? [] };
   });

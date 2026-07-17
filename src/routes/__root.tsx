@@ -83,14 +83,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "Book appointments, consult doctors online, and manage your medical records at MH Hospital. 24/7 emergency care and specialists across 8+ departments.",
       },
-      { property: "og:title", content: "MH Hospital — Advanced Medical Care" },
+      { property: "og:title", content: "MH Hospital — Advanced Medical Care & Online Consultation" },
       {
         property: "og:description",
         content:
-          "Book in-person visits, launch a video consultation, and access your medical records — all from one portal.",
+          "Book appointments, consult doctors online, and manage your medical records at MH Hospital. 24/7 emergency care and specialists across 8+ departments.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "MH Hospital — Advanced Medical Care & Online Consultation" },
+      { name: "twitter:description", content: "Book appointments, consult doctors online, and manage your medical records at MH Hospital. 24/7 emergency care and specialists across 8+ departments." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/358ceb7f-653c-40df-918a-2bae247e1039/id-preview-68504a32--dcf06839-2a39-4343-90d5-bfdd4e05756f.lovable.app-1784259133632.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/358ceb7f-653c-40df-918a-2bae247e1039/id-preview-68504a32--dcf06839-2a39-4343-90d5-bfdd4e05756f.lovable.app-1784259133632.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

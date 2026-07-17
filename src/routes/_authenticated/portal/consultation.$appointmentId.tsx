@@ -174,6 +174,26 @@ function Consultation() {
               <p className="text-xs text-muted-foreground">{appt.reason}</p>
             </div>
           )}
+          {isVideo && (
+            <div>
+              <div className="mono-label mb-1">SESSION LINK</div>
+              {sessionMismatch && (
+                <div className="text-[11px] text-emergency mb-1">Link token doesn't match — verify with your provider.</div>
+              )}
+              <div className="font-mono text-[10px] break-all bg-muted p-2 border border-border">{joinUrl}</div>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(joinUrl).then(
+                    () => toast.success("Session link copied"),
+                    () => toast.error("Unable to copy link"),
+                  );
+                }}
+                className="mt-2 w-full border border-border px-3 py-1.5 text-[11px] font-mono uppercase hover:bg-accent"
+              >
+                Copy join link
+              </button>
+            </div>
+          )}
           <Link to="/portal/appointments" className="block text-xs mono-label text-primary hover:underline">
             ← BACK TO APPOINTMENTS
           </Link>

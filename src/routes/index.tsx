@@ -239,7 +239,7 @@ function Home() {
       <section className="max-w-7xl mx-auto px-4 lg:px-8 py-20 lg:py-28">
         <div className="flex items-end justify-between mb-12 flex-wrap gap-4">
           <div>
-            <div className="text-kicker mb-3">04 — PATIENT REVIEWS</div>
+            <div className="text-kicker mb-3">PATIENT REVIEWS</div>
             <h2 className="font-mono font-bold text-4xl md:text-5xl tracking-tight leading-none">
               What patients<br />say about us.
             </h2>

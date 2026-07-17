@@ -32,7 +32,7 @@ function Home() {
                   Advanced care, precisely scheduled.
                 </h1>
                 <p className="text-muted-foreground max-w-lg text-sm">
-                  Book in-person visits, launch encrypted video consultations, and access your medical records — from a single operational portal.
+                  Book in-person visits, launch video consultations, and access your medical records — from a single operational portal.
                 </p>
               </div>
               <div className="text-right">

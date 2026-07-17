@@ -36,8 +36,8 @@ function Home() {
                 </p>
               </div>
               <div className="text-right">
-                <div className="mono-label">SYSTEM STATUS</div>
-                <div className="text-xs font-mono text-success mt-1">SECURE / ENCRYPTED</div>
+                <div className="mono-label">{"\n"}</div>
+                <div className="text-xs font-mono text-success mt-1">{"\n"}</div>
               </div>
             </div>
             <div className="flex flex-wrap gap-3">

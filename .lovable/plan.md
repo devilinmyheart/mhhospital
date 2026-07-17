@@ -1,19 +1,22 @@
-## Fix hero overflow on mid-desktop widths
+## Truly fix hero headline overflow
 
-The problem: at viewports around 900–1100px (like the user's 995px preview), the huge monospace headline "schedule" bleeds under the corridor image because the h1 font size jumps to the `lg:` value (104px) as soon as the layout also switches to a 7/5 side-by-side grid. The italic "schedule" word alone is wider than the 7-column text track at that width, so it slides into the image column.
+The stacked layout helped, but at ~995px the italic word "schedule" alone still overruns the viewport because the h1 uses `lg:text-[84px]` — a single 84px monospace word is ~640px wide and the "e" wraps to its own line, which looks broken.
 
-### Changes (single file: `src/routes/index.tsx`)
+### Root cause
+The font sizes are hardcoded pixel values that don't scale with viewport width. On a narrow laptop the `lg:` breakpoint fires but the container is still only ~960px wide.
 
-1. **Delay the side-by-side layout until it actually fits.** Change the hero grid from `lg:col-span-7 / lg:col-span-5` to trigger at `xl:` instead of `lg:`. Between `lg` and `xl` the two blocks stack cleanly and the image sits below the headline — no overlap.
+### Fix (single file: `src/routes/index.tsx`)
 
-2. **Retune the headline scale** so it never exceeds its column:
-   - `text-[44px] sm:text-[64px] lg:text-[84px] xl:text-[96px]`
-   - Add `break-words` and `min-w-0` on the text column so the italic word can't push the column wider than its grid track.
+1. **Replace fixed h1 sizes with a fluid `clamp()`** so the headline always fits its column:
+   ```
+   style={{ fontSize: "clamp(2.25rem, 8.5vw, 6.5rem)" }}
+   ```
+   Remove the `text-[..]` classes for the h1. This scales smoothly from ~36px on phones to 104px on wide desktops with no dead zone in the middle.
 
-3. **Increase the grid gap** at the split breakpoint (`xl:gap-12`) so even at the narrowest side-by-side width there's a safety margin between text and image.
+2. **Prevent single-word overflow** by adding `[word-break:break-word] hyphens-none` and `max-w-full` on the h1, so even if a word is very wide it wraps cleanly inside the column instead of bleeding past.
 
-4. No changes to copy, image, colors, or any other section — purely responsive fitment on the hero.
+3. **Tighten the italic word specifically** — wrap "schedule" in a span with `inline-block max-w-full` and a slightly smaller relative size (`text-[0.9em]`) so the italic (which is optically wider than the roman) never becomes the widest element.
 
-### Why not just shrink the font
+4. **Remove the forced side-by-side split at `xl`** and keep the image column stacked below the text until `xl` — no change from last turn, already correct.
 
-Shrinking alone would make the headline look weak on true desktop (≥1280px). Gating the split layout at `xl` keeps the dramatic 96px headline at wide widths and stacks safely on laptops.
+No copy changes, no color/layout changes elsewhere.

@@ -12,7 +12,7 @@ export function EmergencyRibbon() {
           Emergency · 24/7
         </span>
         <span className="opacity-40 hidden sm:inline">/</span>
-        <span className="hidden sm:inline opacity-70">Sikarpur Rd · Maharajganj</span>
+        <span className="hidden sm:inline opacity-70">{"\n"}</span>
       </div>
       <a href="tel:+917905932721" className="hidden md:flex items-center gap-2 group">
         <span className="opacity-70 group-hover:opacity-100">Call ER</span>

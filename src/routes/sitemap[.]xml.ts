@@ -1,5 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="../../node_modules/@tanstack/start-client-core/dist/esm/serverRoute.d.ts" />
 import { createFileRoute } from "@tanstack/react-router";
-import type {} from "@tanstack/react-start";
 
 const BASE_URL = "https://mhhospital.lovable.app";
 
@@ -50,4 +51,4 @@ export const Route = createFileRoute("/sitemap.xml")({
       },
     },
   },
-});
+} as Parameters<ReturnType<typeof createFileRoute<"/sitemap.xml">>>[0]);

@@ -11,10 +11,12 @@ const patientNav = [
 const doctorNav = [
   { to: "/doctor", label: "SCHEDULE" },
   { to: "/doctor/appointments", label: "APPOINTMENTS" },
+  { to: "/doctor/availability", label: "AVAILABILITY" },
 ];
 const adminNav = [
   { to: "/admin", label: "OVERVIEW" },
   { to: "/admin/doctors", label: "DOCTORS" },
+  { to: "/admin/availability", label: "AVAILABILITY" },
 ];
 
 export function PortalShell({ scope, children }: { scope: "patient" | "doctor" | "admin"; children: ReactNode }) {

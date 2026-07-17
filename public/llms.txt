@@ -1,0 +1,16 @@
+# MH Hospital
+
+> MH Hospital patient operations portal — book in-person visits, launch encrypted video consultations, and manage medical records from a single interface.
+
+## Pages
+
+- [Home](/): Overview of MH Hospital services, departments, and virtual care.
+- [Departments](/departments): Full directory of clinical specialties.
+- [Physicians](/physicians): Searchable directory of MH Hospital doctors.
+- [Book Appointment](/book): Multi-step wizard to schedule in-person or video visits.
+- [About](/about): About MH Hospital and its care philosophy.
+- [Contact](/contact): Address, phone numbers, and emergency contact.
+
+## Optional
+
+- [Sign in](/auth): Patient, doctor, and admin sign-in.

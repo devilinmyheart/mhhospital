@@ -1,0 +1,2 @@
+ALTER TABLE public.appointments ADD COLUMN IF NOT EXISTS session_token uuid NOT NULL DEFAULT gen_random_uuid();
+CREATE INDEX IF NOT EXISTS appointments_session_token_idx ON public.appointments(session_token);

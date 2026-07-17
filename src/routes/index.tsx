@@ -152,67 +152,6 @@ function Home() {
           </div>
         </section>
 
-        {/* FEATURED PHYSICIANS — editor's pick */}
-        {editorPick && (
-          <section className="pb-20 lg:pb-28">
-            <div className="grid grid-cols-12 gap-6 lg:gap-10">
-              <div className="col-span-12 lg:col-span-5">
-                <div className="text-kicker mb-3">§ 02 — Featured</div>
-                <h2 className="font-mono font-bold text-4xl md:text-5xl tracking-tight leading-none mb-6">
-                  Editor's<br />pick.
-                </h2>
-                <p className="text-muted-foreground max-w-md leading-relaxed mb-8">
-                  Every week we highlight a physician whose calendar has room for you. This week: {editorPick.full_name.split(" ").slice(-1)}.
-                </p>
-                <div className="relative aspect-[4/5] overflow-hidden bg-muted border border-border">
-                  <div className="absolute inset-0 grid place-items-center">
-                    <div className="font-mono text-[96px] font-bold text-foreground/10">
-                      {editorPick.full_name.split(" ").map((s: string) => s[0]).join("").slice(0, 2)}
-                    </div>
-                  </div>
-                  <div className="absolute bottom-0 inset-x-0 p-6 bg-background/95 backdrop-blur border-t border-border">
-                    <div className="text-kicker mb-2">{editorPick.title || "Consultant"}</div>
-                    <div className="font-mono font-bold text-xl mb-4">{editorPick.full_name}</div>
-                    <Link to="/book" className="inline-flex items-center gap-2 text-[11px] font-mono uppercase tracking-widest text-primary hover:gap-4 transition-all">
-                      Book a visit →
-                    </Link>
-                  </div>
-                </div>
-              </div>
-
-              <div className="col-span-12 lg:col-span-7 flex flex-col justify-between gap-6">
-                {supporting.map((doc: any, i: number) => (
-                  <Link
-                    key={doc.id}
-                    to="/physicians"
-                    className="group grid grid-cols-12 gap-4 items-center py-6 border-b border-border hover-lift"
-                  >
-                    <div className="col-span-1 font-mono text-[11px] text-muted-foreground">
-                      {String(i + 2).padStart(2, "0")}
-                    </div>
-                    <div className="col-span-3">
-                      <div className="aspect-square bg-muted grid place-items-center font-mono text-2xl text-muted-foreground">
-                        {doc.full_name.split(" ").map((s: string) => s[0]).join("").slice(0, 2)}
-                      </div>
-                    </div>
-                    <div className="col-span-6">
-                      <div className="text-kicker !text-muted-foreground mb-1">{doc.title || "Consultant"}</div>
-                      <h3 className="font-mono font-bold text-xl tracking-tight group-hover:text-primary transition-colors">
-                        {doc.full_name}
-                      </h3>
-                      <p className="text-xs text-muted-foreground mt-1 line-clamp-1">
-                        Available this week · Video & in-person
-                      </p>
-                    </div>
-                    <div className="col-span-2 text-right font-mono text-[11px] uppercase tracking-widest text-foreground group-hover:text-primary">
-                      Book →
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
 
         {/* HOW IT WORKS */}
         <section className="pb-20 lg:pb-28">

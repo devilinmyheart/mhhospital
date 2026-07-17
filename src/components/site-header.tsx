@@ -47,7 +47,7 @@ export function SiteHeader() {
           <div className="flex items-center gap-10">
             <Link to="/" className="flex items-center gap-2 group">
               <span className="size-7 bg-foreground text-background grid place-items-center font-mono font-bold text-[13px] group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                M
+                MH
               </span>
               <span className="font-mono font-bold tracking-tight text-[15px]">
                 MH<span className="text-primary">·</span>HOSPITAL

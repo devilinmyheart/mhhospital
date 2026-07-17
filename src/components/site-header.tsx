@@ -11,7 +11,7 @@ export function EmergencyRibbon() {
           <span className="size-1.5 bg-primary rounded-full animate-pulse" />
           Emergency · 24/7
         </span>
-        <span className="opacity-40 hidden sm:inline">/</span>
+        <span className="opacity-40 hidden sm:inline">{"\n"}</span>
         <span className="hidden sm:inline opacity-70">{"\n"}</span>
       </div>
       <a href="tel:+917905932721" className="hidden md:flex items-center gap-2 group">

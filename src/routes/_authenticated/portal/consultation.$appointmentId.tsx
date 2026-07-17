@@ -25,7 +25,13 @@ export const Route = createFileRoute("/_authenticated/portal/consultation/$appoi
 
 function Consultation() {
   const { appointmentId } = Route.useParams();
+  const { session: sessionParam } = Route.useSearch();
   const { data: appt } = useSuspenseQuery(qo(appointmentId));
+  const roomId = (appt as any).session_token ?? appointmentId;
+  const sessionMismatch = sessionParam !== "" && sessionParam !== roomId;
+  const joinUrl = typeof window !== "undefined"
+    ? `${window.location.origin}/portal/consultation/${appointmentId}?session=${roomId}`
+    : "";
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const [joined, setJoined] = useState(false);

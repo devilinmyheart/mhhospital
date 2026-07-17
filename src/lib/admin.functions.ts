@@ -330,10 +330,10 @@ export const adminUpsertHospital = createServerFn({ method: "POST" })
     const payload: Record<string, any> = {};
     for (const [k, v] of Object.entries(raw)) payload[k] = v === "" ? null : v;
     if (id) {
-      const { error } = await context.supabase.from("hospitals").update(payload).eq("id", id);
+      const { error } = await context.supabase.from("hospitals").update(payload as any).eq("id", id);
       if (error) throw new Error(error.message);
     } else {
-      const { error } = await context.supabase.from("hospitals").insert(payload);
+      const { error } = await context.supabase.from("hospitals").insert(payload as any);
       if (error) throw new Error(error.message);
     }
     return { ok: true };

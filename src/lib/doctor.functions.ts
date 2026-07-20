@@ -75,24 +75,53 @@ export const doctorConfirmAppointment = createServerFn({ method: "POST" })
       .eq("doctor_id", doctorId)
       .eq("status", "pending");
     if (error) throw new Error(error.message);
+    const { data: appt } = await context.supabase
+      .from("appointments")
+      .select("id, patient_id, scheduled_at, doctors(full_name)")
+      .eq("id", data.appointmentId)
+      .maybeSingle();
+    if (appt) {
+      const { pushNotification, getAdminUserIds, appointmentNumber } = await import("@/lib/notifications.server");
+      const num = appointmentNumber(appt.id, appt.scheduled_at);
+      const when = new Date(appt.scheduled_at).toLocaleString();
+      const doc = appt.doctors?.full_name ?? "your doctor";
+      await pushNotification([{ user_id: appt.patient_id, title: `Appointment confirmed · ${num}`, body: `Your visit with ${doc} on ${when} is confirmed.`, link: "/portal/appointments" }]);
+      const admins = await getAdminUserIds();
+      await pushNotification(admins.map((uid) => ({ user_id: uid, title: `Confirmed · ${num}`, body: `${doc} — ${when}`, link: "/admin/appointments" })));
+    }
     return { ok: true };
   });
 
 export const doctorRejectAppointment = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ appointmentId: z.string().uuid() }).parse(d))
+  .inputValidator((d: unknown) => z.object({ appointmentId: z.string().uuid(), reason: z.string().trim().min(3).max(500) }).parse(d))
   .handler(async ({ context, data }) => {
     const doctorId = await myDoctorId(context);
     if (!doctorId) throw new Error("Not a doctor");
     const { error } = await context.supabase
       .from("appointments")
-      .update({ status: "rejected" })
+      .update({ status: "rejected", rejection_reason: data.reason })
       .eq("id", data.appointmentId)
       .eq("doctor_id", doctorId)
       .eq("status", "pending");
     if (error) throw new Error(error.message);
+    const { data: appt } = await context.supabase
+      .from("appointments")
+      .select("id, patient_id, scheduled_at, doctors(full_name)")
+      .eq("id", data.appointmentId)
+      .maybeSingle();
+    if (appt) {
+      const { pushNotification, getAdminUserIds, appointmentNumber } = await import("@/lib/notifications.server");
+      const num = appointmentNumber(appt.id, appt.scheduled_at);
+      const when = new Date(appt.scheduled_at).toLocaleString();
+      const doc = appt.doctors?.full_name ?? "your doctor";
+      await pushNotification([{ user_id: appt.patient_id, title: `Appointment declined · ${num}`, body: `Your visit with ${doc} on ${when} was declined. Reason: ${data.reason}`, link: "/portal/appointments" }]);
+      const admins = await getAdminUserIds();
+      await pushNotification(admins.map((uid) => ({ user_id: uid, title: `Rejected · ${num}`, body: `${doc} — ${when}. Reason: ${data.reason}`, link: "/admin/appointments" })));
+    }
     return { ok: true };
   });
+
 
 const rxSchema = z.object({
   appointmentId: z.string().uuid(),

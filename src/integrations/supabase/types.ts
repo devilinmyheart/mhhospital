@@ -25,6 +25,7 @@ export type Database = {
           notes: string | null
           patient_id: string
           reason: string | null
+          rejection_reason: string | null
           scheduled_at: string
           session_token: string
           status: Database["public"]["Enums"]["appointment_status"]
@@ -39,6 +40,7 @@ export type Database = {
           notes?: string | null
           patient_id: string
           reason?: string | null
+          rejection_reason?: string | null
           scheduled_at: string
           session_token?: string
           status?: Database["public"]["Enums"]["appointment_status"]
@@ -53,6 +55,7 @@ export type Database = {
           notes?: string | null
           patient_id?: string
           reason?: string | null
+          rejection_reason?: string | null
           scheduled_at?: string
           session_token?: string
           status?: Database["public"]["Enums"]["appointment_status"]
@@ -353,6 +356,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          link: string | null
+          read_at: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          link?: string | null
+          read_at?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          link?: string | null
+          read_at?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       prescriptions: {
         Row: {

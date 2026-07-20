@@ -4,7 +4,9 @@ import { useServerFn } from "@tanstack/react-start";
 import { useState, useMemo } from "react";
 import { getDoctorAppointments, markAppointmentCompleted, doctorConfirmAppointment, doctorRejectAppointment } from "@/lib/doctor.functions";
 import { PortalShell } from "@/components/portal-shell";
+import { RejectReasonDialog } from "@/components/reject-reason-dialog";
 import { toast } from "sonner";
+
 
 const qo = queryOptions({ queryKey: ["doctor", "appts"], queryFn: () => getDoctorAppointments() });
 
@@ -20,6 +22,7 @@ function DocAppts() {
   const { data } = useSuspenseQuery(qo);
   const qc = useQueryClient();
   const [filter, setFilter] = useState<Filter>("pending");
+  const [rejectTarget, setRejectTarget] = useState<any>(null);
 
   const complete = useServerFn(markAppointmentCompleted);
   const confirmFn = useServerFn(doctorConfirmAppointment);
@@ -37,10 +40,11 @@ function DocAppts() {
     onError: (e: Error) => toast.error(e.message),
   });
   const rejectMut = useMutation({
-    mutationFn: (id: string) => rejectFn({ data: { appointmentId: id } }),
-    onSuccess: () => { toast.success("Appointment rejected"); invalidate(); },
+    mutationFn: (v: { id: string; reason: string }) => rejectFn({ data: { appointmentId: v.id, reason: v.reason } }),
+    onSuccess: () => { toast.success("Appointment rejected"); invalidate(); setRejectTarget(null); },
     onError: (e: Error) => toast.error(e.message),
   });
+
 
   const filtered = useMemo(
     () => (filter === "all" ? data : data.filter((a: any) => a.status === filter)),
@@ -92,8 +96,7 @@ function DocAppts() {
                     Confirm
                   </button>
                   <button
-                    disabled={rejectMut.isPending}
-                    onClick={() => rejectMut.mutate(a.id)}
+                    onClick={() => setRejectTarget(a)}
                     className="border border-emergency/40 text-emergency text-[11px] font-mono uppercase px-3 py-1.5 hover:bg-emergency/10 disabled:opacity-50"
                   >
                     Reject
@@ -114,6 +117,13 @@ function DocAppts() {
         ))}
         {filtered.length === 0 && <div className="p-8 text-sm text-muted-foreground">No appointments.</div>}
       </div>
+      <RejectReasonDialog
+        open={!!rejectTarget}
+        onClose={() => setRejectTarget(null)}
+        pending={rejectMut.isPending}
+        onConfirm={(reason) => rejectTarget && rejectMut.mutate({ id: rejectTarget.id, reason })}
+      />
     </PortalShell>
   );
 }
+

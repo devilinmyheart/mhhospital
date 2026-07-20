@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
-import { getMyReports } from "@/lib/portal.functions";
+import { useServerFn } from "@tanstack/react-start";
+import { getMyReports, getMyReportSignedUrl } from "@/lib/portal.functions";
 import { PortalShell } from "@/components/portal-shell";
+import { toast } from "sonner";
 
 const qo = queryOptions({ queryKey: ["portal", "reports"], queryFn: () => getMyReports() });
 
@@ -12,6 +14,13 @@ export const Route = createFileRoute("/_authenticated/portal/reports")({
 
 function Reports() {
   const { data } = useSuspenseQuery(qo);
+  const signFn = useServerFn(getMyReportSignedUrl);
+  async function open(id: string) {
+    try {
+      const { url } = await signFn({ data: { reportId: id } });
+      window.open(url, "_blank", "noopener,noreferrer");
+    } catch (e: any) { toast.error(e.message); }
+  }
   return (
     <PortalShell scope="patient">
       <div className="mb-6 animate-enter">
@@ -25,6 +34,11 @@ function Reports() {
             <div className="mono-label w-24 shrink-0">{new Date(r.uploaded_at).toLocaleDateString()}</div>
             <div className="flex-1 text-sm font-semibold">{r.title}</div>
             <span className="text-[10px] font-mono bg-muted px-2 py-1 rounded uppercase">{r.status}</span>
+            {r.file_path && (
+              <button onClick={() => open(r.id)} className="text-[11px] font-mono uppercase border border-border px-3 py-1.5 hover:bg-accent">
+                Download
+              </button>
+            )}
           </div>
         ))}
       </div>

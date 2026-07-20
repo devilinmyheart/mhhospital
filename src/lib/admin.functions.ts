@@ -124,6 +124,15 @@ export const adminUpdateAppointment = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+async function loadApptForNotify(supabase: any, id: string) {
+  const { data } = await supabase
+    .from("appointments")
+    .select("id, patient_id, scheduled_at, doctors(full_name), departments(name)")
+    .eq("id", id)
+    .maybeSingle();
+  return data;
+}
+
 export const adminConfirmAppointment = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ appointmentId: z.string().uuid() }).parse(d))
@@ -135,22 +144,51 @@ export const adminConfirmAppointment = createServerFn({ method: "POST" })
       .eq("id", data.appointmentId)
       .eq("status", "pending");
     if (error) throw new Error(error.message);
+    const appt = await loadApptForNotify(context.supabase, data.appointmentId);
+    if (appt) {
+      const { pushNotification, getAdminUserIds, appointmentNumber } = await import("@/lib/notifications.server");
+      const num = appointmentNumber(appt.id, appt.scheduled_at);
+      const when = new Date(appt.scheduled_at).toLocaleString();
+      const doc = appt.doctors?.full_name ?? "your doctor";
+      await pushNotification([
+        { user_id: appt.patient_id, title: `Appointment confirmed · ${num}`, body: `Your visit with ${doc} on ${when} is confirmed.`, link: "/portal/appointments" },
+      ]);
+      const admins = await getAdminUserIds();
+      await pushNotification(admins.map((uid) => ({
+        user_id: uid, title: `Confirmed · ${num}`, body: `${doc} — ${when}`, link: "/admin/appointments",
+      })));
+    }
     return { ok: true };
   });
 
 export const adminRejectAppointment = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ appointmentId: z.string().uuid() }).parse(d))
+  .inputValidator((d: unknown) => z.object({ appointmentId: z.string().uuid(), reason: z.string().trim().min(3).max(500) }).parse(d))
   .handler(async ({ context, data }) => {
     await assertAdmin(context);
     const { error } = await context.supabase
       .from("appointments")
-      .update({ status: "rejected" })
+      .update({ status: "rejected", rejection_reason: data.reason })
       .eq("id", data.appointmentId)
       .eq("status", "pending");
     if (error) throw new Error(error.message);
+    const appt = await loadApptForNotify(context.supabase, data.appointmentId);
+    if (appt) {
+      const { pushNotification, getAdminUserIds, appointmentNumber } = await import("@/lib/notifications.server");
+      const num = appointmentNumber(appt.id, appt.scheduled_at);
+      const when = new Date(appt.scheduled_at).toLocaleString();
+      const doc = appt.doctors?.full_name ?? "your doctor";
+      await pushNotification([
+        { user_id: appt.patient_id, title: `Appointment declined · ${num}`, body: `Your visit with ${doc} on ${when} was declined. Reason: ${data.reason}`, link: "/portal/appointments" },
+      ]);
+      const admins = await getAdminUserIds();
+      await pushNotification(admins.map((uid) => ({
+        user_id: uid, title: `Rejected · ${num}`, body: `${doc} — ${when}. Reason: ${data.reason}`, link: "/admin/appointments",
+      })));
+    }
     return { ok: true };
   });
+
 
 /* ============ DEPARTMENTS ============ */
 const departmentSchema = z.object({

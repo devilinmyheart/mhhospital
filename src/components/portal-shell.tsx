@@ -1,5 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
+import { NotificationBell } from "@/components/notification-bell";
 import type { ReactNode } from "react";
 
 const patientNav = [
@@ -10,14 +11,17 @@ const patientNav = [
 ];
 const doctorNav = [
   { to: "/doctor", label: "SCHEDULE" },
+  { to: "/doctor/queue", label: "QUEUE" },
   { to: "/doctor/appointments", label: "APPOINTMENTS" },
   { to: "/doctor/availability", label: "AVAILABILITY" },
 ];
 const adminNav = [
   { to: "/admin", label: "OVERVIEW" },
+  { to: "/admin/queue", label: "QUEUE" },
   { to: "/admin/hospitals", label: "HOSPITALS" },
   { to: "/admin/departments", label: "DEPARTMENTS" },
   { to: "/admin/doctors", label: "DOCTORS" },
+  { to: "/admin/patients", label: "PATIENTS" },
   { to: "/admin/availability", label: "AVAILABILITY" },
   { to: "/admin/appointments", label: "APPOINTMENTS" },
   { to: "/admin/reviews", label: "REVIEWS" },
@@ -36,20 +40,25 @@ export function PortalShell({ scope, children }: { scope: "patient" | "doctor" |
       <div className="border-b border-border bg-card/50">
         <div className="max-w-7xl mx-auto px-4 lg:px-6 flex items-center gap-1 overflow-x-auto">
           <div className="mono-label mr-4 py-3 shrink-0">{scopeLabel}</div>
-          {nav.map((n) => {
-            const active = pathname === n.to;
-            return (
-              <Link
-                key={n.to}
-                to={n.to}
-                className={`text-[11px] font-mono px-3 py-3 border-b-2 transition-colors ${
-                  active ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {n.label}
-              </Link>
-            );
-          })}
+          <div className="flex items-center gap-1 flex-1 overflow-x-auto">
+            {nav.map((n) => {
+              const active = pathname === n.to;
+              return (
+                <Link
+                  key={n.to}
+                  to={n.to}
+                  className={`text-[11px] font-mono px-3 py-3 border-b-2 transition-colors whitespace-nowrap ${
+                    active ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {n.label}
+                </Link>
+              );
+            })}
+          </div>
+          <div className="py-2 shrink-0">
+            <NotificationBell />
+          </div>
         </div>
       </div>
       <main className="max-w-7xl mx-auto p-4 lg:p-6">{children}</main>
@@ -57,3 +66,4 @@ export function PortalShell({ scope, children }: { scope: "patient" | "doctor" |
     </div>
   );
 }
+

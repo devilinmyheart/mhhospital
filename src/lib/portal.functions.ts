@@ -101,11 +101,28 @@ export const getMyReports = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data } = await context.supabase
       .from("medical_reports")
-      .select("id, title, category, status, uploaded_at, doctors(full_name)")
+      .select("id, title, category, status, uploaded_at, file_path, doctors(full_name)")
       .eq("patient_id", context.userId)
       .order("uploaded_at", { ascending: false });
     return data ?? [];
   });
+
+export const getMyReportSignedUrl = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ reportId: z.string().uuid() }).parse(d))
+  .handler(async ({ context, data }) => {
+    const { data: rep } = await context.supabase
+      .from("medical_reports")
+      .select("id, patient_id, file_path")
+      .eq("id", data.reportId)
+      .maybeSingle();
+    if (!rep || rep.patient_id !== context.userId || !rep.file_path) throw new Error("Not found");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: signed, error } = await supabaseAdmin.storage.from("patient-files").createSignedUrl(rep.file_path, 300);
+    if (error || !signed) throw new Error(error?.message ?? "Signing failed");
+    return { url: signed.signedUrl };
+  });
+
 
 export const cancelAppointment = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

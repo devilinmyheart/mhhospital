@@ -1,30 +1,53 @@
 ## Goal
 
-New patient bookings arrive as **pending** and become **booked** only after an admin or the assigned doctor confirms them. Rejection is also supported.
+Complete the pending-approval workflow with notifications, in-app alerts, rejection reasons, an admin/doctor approval queue, an Ophthalmology department, and admin-side file uploads for patient reports.
 
-## Changes
+## 1. Email notifications (confirm / reject)
 
-### 1. Database (migration)
+- Set up Lovable managed email (requires a verified sender domain — you'll be prompted to enter one you own, e.g. `notify@mh-hospital.com`).
+- Scaffold app-email templates: `appointment-confirmed` and `appointment-rejected`, both including a human-readable **appointment number** in the format `MH-YYYYMMDD-HHMM-XXXX` (date + time + short id suffix).
+- On confirm/reject server functions (`adminConfirmAppointment`, `adminRejectAppointment`, `doctorConfirmAppointment`, `doctorRejectAppointment`):
+  - Send email to the **patient** (their auth email).
+  - Send email to the **hospital notification address** (a single configurable admin recipient — you'll provide the address).
 
-- Extend the appointment status enum with `pending` and `rejected` (keep existing `booked`, `completed`, `cancelled`).
-- Change the default status for new appointments to `pending`.
-- Update `appointments_restrict_patient_updates()` trigger so patients may still only set status to `cancelled` (no self-approval).
-- Video-consultation join window (in `consultation.$appointmentId.tsx`) already checks `status = 'booked'`, so pending appointments cannot start a video call — no schema change needed there.
+If you don't want to set up a sender domain right now, I'll skip the email portion and ship everything else; in-app notifications will still work.
 
-### 2. Server functions
+## 2. In-app notifications
 
-- `src/lib/portal.functions.ts` › `bookAppointment`: insert with `status: "pending"`. Keep slot-capacity validation as-is (a pending booking still holds the slot to prevent double-booking).
-- `src/lib/portal.functions.ts` › `getMyDashboard` / `getMyAppointments`: return status so the UI can show a "Pending confirmation" badge.
-- `src/lib/admin.functions.ts` and `src/lib/doctor.functions.ts`: add `confirmAppointment({ appointmentId })` and `rejectAppointment({ appointmentId, reason? })`. Admin version works on any appointment; doctor version restricts to `doctor.user_id = auth.uid()`. Both flip status `pending → booked` (confirm) or `pending → rejected` (reject).
+- New `notifications` table (`user_id`, `title`, `body`, `link`, `read_at`, `created_at`) with RLS so users only see their own.
+- On confirm/reject: insert one row for the patient and one for each admin user.
+- Header bell icon with unread count + dropdown list (mark-as-read on click), visible in patient/doctor/admin portals.
 
-### 3. UI
+## 3. Rejection reason (required)
 
-- **Patient portal** (`_authenticated/portal/appointments.tsx`, dashboard): show a "PENDING" badge for pending rows; hide the "Join video" CTA until confirmed; keep Cancel available.
-- **Booking success** (`book.tsx`): change toast/redirect copy to "Request submitted — awaiting confirmation" and route to `/portal/appointments` instead of the video room even for video mode.
-- **Admin appointments** (`_authenticated/admin/appointments.tsx`): add a "Pending" filter at the top and Confirm / Reject buttons on pending rows.
-- **Doctor appointments** (`_authenticated/doctor/appointments.tsx`): same Confirm / Reject actions, scoped to the doctor's own appointments.
+- Add `rejection_reason text` column to `appointments`.
+- `adminRejectAppointment` / `doctorRejectAppointment` now require a non-empty reason (Zod min(3)).
+- Admin & doctor UI: replace the plain "Reject" button with a dialog that asks for the reason.
+- Patient portal: rejected rows show a red info block with "Reason: {reason}".
 
-### Out of scope
+## 4. Approval queue page
 
-- Email notifications on confirm/reject (can be added later if desired).
-- Reworking the existing security findings visible in the More panel.
+- New route `/admin/queue` and `/doctor/queue` — lists only `status='pending'` appointments, sorted oldest first, with Confirm and Reject-with-reason actions inline.
+- Add "Approval queue" link to the admin & doctor sidebars with a live pending count badge.
+
+## 5. Ophthalmology department
+
+- Insert an "Ophthalmology" row into `departments` (with icon/description consistent with existing seed rows) so it appears in booking and admin lists.
+
+## 6. Admin file uploads for patient records
+
+- Create a private Supabase Storage bucket `patient-files` (admins & the owning patient can read; only admins can write).
+- Extend `medical_reports` with `file_path text` (storage key).
+- New admin route `/admin/patients` → pick a patient → upload report (title, category, file). Uses `supabaseAdmin` inside a server function to write to storage after verifying admin role.
+- Patient portal Reports page: adds a "Download" link that fetches a short-lived signed URL via a server function.
+
+## Out of scope
+
+- SMS notifications.
+- Bulk file uploads / drag-and-drop reordering.
+- Editing a rejected appointment back to pending (patient must re-book).
+
+## What I need from you before building
+
+1. **Sender email domain** for confirmation/rejection emails — do you have one to configure, or should I skip email for now and do in-app only?
+2. **Hospital notification recipient address** (where "notify me on confirm/reject" emails go).

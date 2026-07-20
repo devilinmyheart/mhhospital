@@ -104,12 +104,12 @@ function ApptsAdmin() {
                     Confirm
                   </button>
                   <button
-                    disabled={rejectMut.isPending}
-                    onClick={() => rejectMut.mutate(a.id)}
+                    onClick={() => setRejectTarget(a)}
                     className="border border-emergency/40 text-emergency text-[11px] font-mono uppercase px-3 py-1.5 hover:bg-emergency/10 disabled:opacity-50"
                   >
                     Reject
                   </button>
+
                 </>
               )}
               <select

@@ -22,6 +22,7 @@ function DocAppts() {
   const { data } = useSuspenseQuery(qo);
   const qc = useQueryClient();
   const [filter, setFilter] = useState<Filter>("pending");
+  const [rejectTarget, setRejectTarget] = useState<any>(null);
 
   const complete = useServerFn(markAppointmentCompleted);
   const confirmFn = useServerFn(doctorConfirmAppointment);
@@ -39,10 +40,11 @@ function DocAppts() {
     onError: (e: Error) => toast.error(e.message),
   });
   const rejectMut = useMutation({
-    mutationFn: (id: string) => rejectFn({ data: { appointmentId: id } }),
-    onSuccess: () => { toast.success("Appointment rejected"); invalidate(); },
+    mutationFn: (v: { id: string; reason: string }) => rejectFn({ data: { appointmentId: v.id, reason: v.reason } }),
+    onSuccess: () => { toast.success("Appointment rejected"); invalidate(); setRejectTarget(null); },
     onError: (e: Error) => toast.error(e.message),
   });
+
 
   const filtered = useMemo(
     () => (filter === "all" ? data : data.filter((a: any) => a.status === filter)),

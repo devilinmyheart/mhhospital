@@ -25,10 +25,13 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedPortalReportsRouteImport } from './routes/_authenticated/portal/reports'
 import { Route as AuthenticatedPortalPrescriptionsRouteImport } from './routes/_authenticated/portal/prescriptions'
 import { Route as AuthenticatedPortalAppointmentsRouteImport } from './routes/_authenticated/portal/appointments'
+import { Route as AuthenticatedDoctorQueueRouteImport } from './routes/_authenticated/doctor/queue'
 import { Route as AuthenticatedDoctorAvailabilityRouteImport } from './routes/_authenticated/doctor/availability'
 import { Route as AuthenticatedDoctorAppointmentsRouteImport } from './routes/_authenticated/doctor/appointments'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
 import { Route as AuthenticatedAdminReviewsRouteImport } from './routes/_authenticated/admin/reviews'
+import { Route as AuthenticatedAdminQueueRouteImport } from './routes/_authenticated/admin/queue'
+import { Route as AuthenticatedAdminPatientsRouteImport } from './routes/_authenticated/admin/patients'
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin/messages'
 import { Route as AuthenticatedAdminHospitalsRouteImport } from './routes/_authenticated/admin/hospitals'
 import { Route as AuthenticatedAdminDoctorsRouteImport } from './routes/_authenticated/admin/doctors'
@@ -121,6 +124,12 @@ const AuthenticatedPortalAppointmentsRoute =
     path: '/portal/appointments',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedDoctorQueueRoute =
+  AuthenticatedDoctorQueueRouteImport.update({
+    id: '/doctor/queue',
+    path: '/doctor/queue',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedDoctorAvailabilityRoute =
   AuthenticatedDoctorAvailabilityRouteImport.update({
     id: '/doctor/availability',
@@ -142,6 +151,17 @@ const AuthenticatedAdminReviewsRoute =
   AuthenticatedAdminReviewsRouteImport.update({
     id: '/admin/reviews',
     path: '/admin/reviews',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminQueueRoute = AuthenticatedAdminQueueRouteImport.update({
+  id: '/admin/queue',
+  path: '/admin/queue',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminPatientsRoute =
+  AuthenticatedAdminPatientsRouteImport.update({
+    id: '/admin/patients',
+    path: '/admin/patients',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAdminMessagesRoute =
@@ -203,10 +223,13 @@ export interface FileRoutesByFullPath {
   '/admin/doctors': typeof AuthenticatedAdminDoctorsRoute
   '/admin/hospitals': typeof AuthenticatedAdminHospitalsRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
+  '/admin/patients': typeof AuthenticatedAdminPatientsRoute
+  '/admin/queue': typeof AuthenticatedAdminQueueRoute
   '/admin/reviews': typeof AuthenticatedAdminReviewsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/doctor/appointments': typeof AuthenticatedDoctorAppointmentsRoute
   '/doctor/availability': typeof AuthenticatedDoctorAvailabilityRoute
+  '/doctor/queue': typeof AuthenticatedDoctorQueueRoute
   '/portal/appointments': typeof AuthenticatedPortalAppointmentsRoute
   '/portal/prescriptions': typeof AuthenticatedPortalPrescriptionsRoute
   '/portal/reports': typeof AuthenticatedPortalReportsRoute
@@ -231,10 +254,13 @@ export interface FileRoutesByTo {
   '/admin/doctors': typeof AuthenticatedAdminDoctorsRoute
   '/admin/hospitals': typeof AuthenticatedAdminHospitalsRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
+  '/admin/patients': typeof AuthenticatedAdminPatientsRoute
+  '/admin/queue': typeof AuthenticatedAdminQueueRoute
   '/admin/reviews': typeof AuthenticatedAdminReviewsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/doctor/appointments': typeof AuthenticatedDoctorAppointmentsRoute
   '/doctor/availability': typeof AuthenticatedDoctorAvailabilityRoute
+  '/doctor/queue': typeof AuthenticatedDoctorQueueRoute
   '/portal/appointments': typeof AuthenticatedPortalAppointmentsRoute
   '/portal/prescriptions': typeof AuthenticatedPortalPrescriptionsRoute
   '/portal/reports': typeof AuthenticatedPortalReportsRoute
@@ -261,10 +287,13 @@ export interface FileRoutesById {
   '/_authenticated/admin/doctors': typeof AuthenticatedAdminDoctorsRoute
   '/_authenticated/admin/hospitals': typeof AuthenticatedAdminHospitalsRoute
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
+  '/_authenticated/admin/patients': typeof AuthenticatedAdminPatientsRoute
+  '/_authenticated/admin/queue': typeof AuthenticatedAdminQueueRoute
   '/_authenticated/admin/reviews': typeof AuthenticatedAdminReviewsRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/doctor/appointments': typeof AuthenticatedDoctorAppointmentsRoute
   '/_authenticated/doctor/availability': typeof AuthenticatedDoctorAvailabilityRoute
+  '/_authenticated/doctor/queue': typeof AuthenticatedDoctorQueueRoute
   '/_authenticated/portal/appointments': typeof AuthenticatedPortalAppointmentsRoute
   '/_authenticated/portal/prescriptions': typeof AuthenticatedPortalPrescriptionsRoute
   '/_authenticated/portal/reports': typeof AuthenticatedPortalReportsRoute
@@ -291,10 +320,13 @@ export interface FileRouteTypes {
     | '/admin/doctors'
     | '/admin/hospitals'
     | '/admin/messages'
+    | '/admin/patients'
+    | '/admin/queue'
     | '/admin/reviews'
     | '/admin/users'
     | '/doctor/appointments'
     | '/doctor/availability'
+    | '/doctor/queue'
     | '/portal/appointments'
     | '/portal/prescriptions'
     | '/portal/reports'
@@ -319,10 +351,13 @@ export interface FileRouteTypes {
     | '/admin/doctors'
     | '/admin/hospitals'
     | '/admin/messages'
+    | '/admin/patients'
+    | '/admin/queue'
     | '/admin/reviews'
     | '/admin/users'
     | '/doctor/appointments'
     | '/doctor/availability'
+    | '/doctor/queue'
     | '/portal/appointments'
     | '/portal/prescriptions'
     | '/portal/reports'
@@ -348,10 +383,13 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/doctors'
     | '/_authenticated/admin/hospitals'
     | '/_authenticated/admin/messages'
+    | '/_authenticated/admin/patients'
+    | '/_authenticated/admin/queue'
     | '/_authenticated/admin/reviews'
     | '/_authenticated/admin/users'
     | '/_authenticated/doctor/appointments'
     | '/_authenticated/doctor/availability'
+    | '/_authenticated/doctor/queue'
     | '/_authenticated/portal/appointments'
     | '/_authenticated/portal/prescriptions'
     | '/_authenticated/portal/reports'
@@ -488,6 +526,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPortalAppointmentsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/doctor/queue': {
+      id: '/_authenticated/doctor/queue'
+      path: '/doctor/queue'
+      fullPath: '/doctor/queue'
+      preLoaderRoute: typeof AuthenticatedDoctorQueueRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/doctor/availability': {
       id: '/_authenticated/doctor/availability'
       path: '/doctor/availability'
@@ -514,6 +559,20 @@ declare module '@tanstack/react-router' {
       path: '/admin/reviews'
       fullPath: '/admin/reviews'
       preLoaderRoute: typeof AuthenticatedAdminReviewsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/queue': {
+      id: '/_authenticated/admin/queue'
+      path: '/admin/queue'
+      fullPath: '/admin/queue'
+      preLoaderRoute: typeof AuthenticatedAdminQueueRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/patients': {
+      id: '/_authenticated/admin/patients'
+      path: '/admin/patients'
+      fullPath: '/admin/patients'
+      preLoaderRoute: typeof AuthenticatedAdminPatientsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/messages': {
@@ -575,10 +634,13 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminDoctorsRoute: typeof AuthenticatedAdminDoctorsRoute
   AuthenticatedAdminHospitalsRoute: typeof AuthenticatedAdminHospitalsRoute
   AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
+  AuthenticatedAdminPatientsRoute: typeof AuthenticatedAdminPatientsRoute
+  AuthenticatedAdminQueueRoute: typeof AuthenticatedAdminQueueRoute
   AuthenticatedAdminReviewsRoute: typeof AuthenticatedAdminReviewsRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedDoctorAppointmentsRoute: typeof AuthenticatedDoctorAppointmentsRoute
   AuthenticatedDoctorAvailabilityRoute: typeof AuthenticatedDoctorAvailabilityRoute
+  AuthenticatedDoctorQueueRoute: typeof AuthenticatedDoctorQueueRoute
   AuthenticatedPortalAppointmentsRoute: typeof AuthenticatedPortalAppointmentsRoute
   AuthenticatedPortalPrescriptionsRoute: typeof AuthenticatedPortalPrescriptionsRoute
   AuthenticatedPortalReportsRoute: typeof AuthenticatedPortalReportsRoute
@@ -595,10 +657,13 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminDoctorsRoute: AuthenticatedAdminDoctorsRoute,
   AuthenticatedAdminHospitalsRoute: AuthenticatedAdminHospitalsRoute,
   AuthenticatedAdminMessagesRoute: AuthenticatedAdminMessagesRoute,
+  AuthenticatedAdminPatientsRoute: AuthenticatedAdminPatientsRoute,
+  AuthenticatedAdminQueueRoute: AuthenticatedAdminQueueRoute,
   AuthenticatedAdminReviewsRoute: AuthenticatedAdminReviewsRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedDoctorAppointmentsRoute: AuthenticatedDoctorAppointmentsRoute,
   AuthenticatedDoctorAvailabilityRoute: AuthenticatedDoctorAvailabilityRoute,
+  AuthenticatedDoctorQueueRoute: AuthenticatedDoctorQueueRoute,
   AuthenticatedPortalAppointmentsRoute: AuthenticatedPortalAppointmentsRoute,
   AuthenticatedPortalPrescriptionsRoute: AuthenticatedPortalPrescriptionsRoute,
   AuthenticatedPortalReportsRoute: AuthenticatedPortalReportsRoute,

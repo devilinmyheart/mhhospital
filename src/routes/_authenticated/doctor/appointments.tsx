@@ -96,8 +96,7 @@ function DocAppts() {
                     Confirm
                   </button>
                   <button
-                    disabled={rejectMut.isPending}
-                    onClick={() => rejectMut.mutate(a.id)}
+                    onClick={() => setRejectTarget(a)}
                     className="border border-emergency/40 text-emergency text-[11px] font-mono uppercase px-3 py-1.5 hover:bg-emergency/10 disabled:opacity-50"
                   >
                     Reject
@@ -118,6 +117,13 @@ function DocAppts() {
         ))}
         {filtered.length === 0 && <div className="p-8 text-sm text-muted-foreground">No appointments.</div>}
       </div>
+      <RejectReasonDialog
+        open={!!rejectTarget}
+        onClose={() => setRejectTarget(null)}
+        pending={rejectMut.isPending}
+        onConfirm={(reason) => rejectTarget && rejectMut.mutate({ id: rejectTarget.id, reason })}
+      />
     </PortalShell>
   );
 }
+

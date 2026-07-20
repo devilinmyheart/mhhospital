@@ -128,6 +128,13 @@ function ApptsAdmin() {
         ))}
         {filtered.length === 0 && <div className="p-8 text-sm text-muted-foreground">No appointments.</div>}
       </div>
+      <RejectReasonDialog
+        open={!!rejectTarget}
+        onClose={() => setRejectTarget(null)}
+        pending={rejectMut.isPending}
+        onConfirm={(reason) => rejectTarget && rejectMut.mutate({ id: rejectTarget.id, reason })}
+      />
     </PortalShell>
   );
 }
+

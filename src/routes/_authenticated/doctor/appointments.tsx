@@ -4,7 +4,9 @@ import { useServerFn } from "@tanstack/react-start";
 import { useState, useMemo } from "react";
 import { getDoctorAppointments, markAppointmentCompleted, doctorConfirmAppointment, doctorRejectAppointment } from "@/lib/doctor.functions";
 import { PortalShell } from "@/components/portal-shell";
+import { RejectReasonDialog } from "@/components/reject-reason-dialog";
 import { toast } from "sonner";
+
 
 const qo = queryOptions({ queryKey: ["doctor", "appts"], queryFn: () => getDoctorAppointments() });
 

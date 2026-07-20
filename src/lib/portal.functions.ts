@@ -58,12 +58,13 @@ export const getMyAppointments = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase
       .from("appointments")
-      .select("id, scheduled_at, duration_min, mode, status, reason, notes, doctor_id, session_token, doctors(full_name, title), departments(name)")
+      .select("id, scheduled_at, duration_min, mode, status, reason, notes, rejection_reason, doctor_id, session_token, doctors(full_name, title), departments(name)")
       .eq("patient_id", context.userId)
       .order("scheduled_at", { ascending: false });
     if (error) throw new Error(error.message);
     return data ?? [];
   });
+
 
 export const getAppointmentById = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])

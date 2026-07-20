@@ -79,6 +79,12 @@ function Appts() {
                 </span>
               </div>
               <div className="col-span-1 text-right text-[11px] text-muted-foreground">{a.duration_min}min</div>
+              {a.status === "rejected" && a.rejection_reason && (
+                <div className="col-span-12 text-[11px] bg-emergency/10 border border-emergency/30 text-emergency p-2 rounded">
+                  <span className="font-mono uppercase mr-2">Reason:</span>{a.rejection_reason}
+                </div>
+              )}
+
 
               {upcoming && (
                 <div className="col-span-12 pt-2 flex flex-wrap justify-end gap-2">
